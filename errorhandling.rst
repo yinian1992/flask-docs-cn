@@ -1,53 +1,43 @@
 .. _application-errors:
 
-Logging Application Errors
+记录应用错误
 ==========================
 
 .. versionadded:: 0.3
 
-Applications fail, servers fail.  Sooner or later you will see an exception
-in production.  Even if your code is 100% correct, you will still see
-exceptions from time to time.  Why?  Because everything else involved will
-fail.  Here some situations where perfectly fine code can lead to server
-errors:
+应用故障，服务器故障。早晚你会在产品中看见异常。即使你的代码是 100% 正确的，
+你仍然会不时看见异常。为什么？因为涉及的所有一切都会出现故障。这里给出一些
+完美正确的代码导致服务器错误的情况:
 
--   the client terminated the request early and the application was still
-    reading from the incoming data.
--   the database server was overloaded and could not handle the query.
--   a filesystem is full
--   a harddrive crashed
--   a backend server overloaded
--   a programming error in a library you are using
--   network connection of the server to another system failed.
+-   客户端在应用读取到达数据时，提前终止请求
+-   数据库服务器超载，并无法处理查询
+-   满的文件系统
+-   硬盘损坏
+-   后端服务器超载
+-   你所用的库出现程序错误
+-   服务器的网络连接或其它系统故障
 
-And that's just a small sample of issues you could be facing.  So how do we
-deal with that sort of problem?  By default if your application runs in
-production mode, Flask will display a very simple page for you and log the
-exception to the :attr:`~flask.Flask.logger`.
+而且这只是你可能面对的问题的简单情形。那么，我们应该怎么处理这一系列问题？
+默认情况下，如果你的应用在以生产模式运行， Flask 会显示一个非常简单的页面并
+记录异常到 :attr:`~flask.Flask.logger` 。
 
-But there is more you can do, and we will cover some better setups to deal
-with errors.
+但是你还可以做些别的，我们会介绍一些更好的设置来应对错误。
 
-Error Mails
+
+错误邮件
 -----------
 
-If the application runs in production mode (which it will do on your
-server) you won't see any log messages by default.  Why is that?  Flask
-tries to be a zero-configuration framework.  Where should it drop the logs
-for you if there is no configuration?  Guessing is not a good idea because
-chances are, the place it guessed is not the place where the user has
-permission to create a logfile.  Also, for most small applications nobody
-will look at the logs anyways.
+如果你的应用在生产模式下运行（会在你的服务器上做），默认情况下，你不会看见
+任何日志消息。为什么会这样？Flask 试图实现一个零配置框架。如果没有配置，日
+志会存放在哪？猜测不是个好主意，因为它猜测的位置可能不是一个用户有权创建日
+志文件的地方。而且，对于大多数小型应用，不会有人关注日志。
 
-In fact, I promise you right now that if you configure a logfile for the
-application errors you will never look at it except for debugging an issue
-when a user reported it for you.  What you want instead is a mail the
-second the exception happened.  Then you get an alert and you can do
-something about it.
+事实上，我现在向你保证，如果你给应用错误配置一个日志文件，你将永远不会看见
+它，除非在调试问题时用户向你报告。你需要的应是异常发生时的邮件，然后你会得
+到一个警报，并做些什么。
 
-Flask uses the Python builtin logging system, and it can actually send
-you mails for errors which is probably what you want.  Here is how you can
-configure the Flask logger to send you mails for exceptions::
+Flask 使用 Python 内置的日志系统，而且它确实向你发送你可能需要的错误邮件。
+这里给出你如何配置 Flask 日志记录器向你发送报告异常的邮件::
 
     ADMINS = ['yourname@example.com']
     if not app.debug:
@@ -59,49 +49,38 @@ configure the Flask logger to send you mails for exceptions::
         mail_handler.setLevel(logging.ERROR)
         app.logger.addHandler(mail_handler)
 
-So what just happened?  We created a new
-:class:`~logging.handlers.SMTPHandler` that will send mails with the mail
-server listening on ``127.0.0.1`` to all the `ADMINS` from the address
-*server-error@example.com* with the subject "YourApplication Failed".  If
-your mail server requires credentials, these can also be provided.  For
-that check out the documentation for the
-:class:`~logging.handlers.SMTPHandler`.
+那么刚刚发生了什么？我们创建了一个新的
+:class:`~logging.handlers.SMTPHandler` 来用监听 ``127.0.0.1`` 的邮件服务器
+向所有地址中所有的 `ADMINS` 发送发件人为 *server-error@example.com* ，主题
+为 "YourApplication Failed" 的邮件。如果你的邮件服务器需要凭证，这些功能也
+被提供了。详情请见 :class:`~logging.handlers.SMTPHandler` 的文档。
 
-We also tell the handler to only send errors and more critical messages.
-Because we certainly don't want to get a mail for warnings or other
-useless logs that might happen during request handling.
+我们同样告诉处理器只发送错误和更重要的消息。因为我们的确不想收到警告或是其
+它没用的，每次请求处理都会发生的日志邮件。
 
-Before you run that in production, please also look at :ref:`logformat` to
-put more information into that error mail.  That will save you from a lot
-of frustration.
+你在生产环境中运行它之前，请参阅 :ref:`logformat` 来向错误邮件中置放更多的
+信息。这会让你少走弯路。
 
 
-Logging to a File
+记录到文件
 -----------------
 
-Even if you get mails, you probably also want to log warnings.  It's a
-good idea to keep as much information around that might be required to
-debug a problem.  Please note that Flask itself will not issue any
-warnings in the core system, so it's your responsibility to warn in the
-code if something seems odd.
+即便你收到了邮件，你可能还是想记录警告。当调试问题的时候，收集更多的信息是个
+好主意。请注意 Flask 核心系统本身不会发出任何警告，所以在古怪的事情发生时发
+出警告是你的责任。
 
-There are a couple of handlers provided by the logging system out of the
-box but not all of them are useful for basic error logging.  The most
-interesting are probably the following:
+在日志系统的方框外提供了一些处理器，但它们对记录基本错误并不是都有用。最让人
+感兴趣的可能是下面的几个:
 
--   :class:`~logging.FileHandler` - logs messages to a file on the
-    filesystem.
--   :class:`~logging.handlers.RotatingFileHandler` - logs messages to a file
-    on the filesystem and will rotate after a certain number of messages.
--   :class:`~logging.handlers.NTEventLogHandler` - will log to the system
-    event log of a Windows system.  If you are deploying on a Windows box,
-    this is what you want to use.
--   :class:`~logging.handlers.SysLogHandler` - sends logs to a UNIX
-    syslog.
+-   :class:`~logging.FileHandler` - 在文件系统上记录日志
+-   :class:`~logging.handlers.RotatingFileHandler` - 在文件系统上记录日志，
+    并且当消息达到一定数目时，会滚动记录
+-   :class:`~logging.handlers.NTEventLogHandler` - 记录到 Windows 系统中的系
+    统事件日志。如果你在 Windows 上做开发，这就是你想要用的。
+-   :class:`~logging.handlers.SysLogHandler` - 发送日志到 Unix 的系统日志
 
-Once you picked your log handler, do like you did with the SMTP handler
-above, just make sure to use a lower setting (I would recommend
-`WARNING`)::
+当你选择了日志处理器，像前面对 SMTP 处理器做的那样，只要确保使用一个低级的设
+置（我推荐 `WARNING` ）::
 
     if not app.debug:
         import logging
@@ -112,7 +91,7 @@ above, just make sure to use a lower setting (I would recommend
 
 .. _logformat:
 
-Controlling the Log Format
+控制日志格式
 --------------------------
 
 By default a handler will only write the message string into a file or
