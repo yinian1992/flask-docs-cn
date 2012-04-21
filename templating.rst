@@ -6,8 +6,8 @@ Flask 利用 Jinja 2 作为模板引擎。你显然可以自由使用其它的�
 以依赖 Jinja2 存在。
 
 本节只给出一个非常快速的介绍，关于 Jinja2 如何继承到 Flask。如果你想获取
-模板引擎本身语法的更多信息，请参考官方  `Jinja2 模板引擎
- <http://jinja.pocoo.org/2/documentation/templates>`_ 。
+模板引擎本身语法的更多信息，请参考官方 
+`Jinja2 模板引擎 <http://jinja.pocoo.org/2/documentation/templates>`_ 。
 
 Jinja 配置
 -----------
@@ -77,9 +77,7 @@ Jinja 配置
 标准过滤器
 ----------------
 
-这些过滤器在 Jinja2 中是可用的，也是 Jinja2 自带的过滤器。
-These filters are available in Jinja2 additionally to the filters provided
-by Jinja2 itself:
+这些过滤器在 Jinja2 中是可用的，也是 Jinja2 自带的过滤器:
 
 .. function:: tojson
    :noindex:
@@ -133,13 +131,11 @@ by Jinja2 itself:
 
 注册过滤器
 -------------------
-如果你要注册
-If you want to register your own filters in Jinja2 you have two ways to do
-that.  You can either put them by hand into the
-:attr:`~flask.Flask.jinja_env` of the application or use the
-:meth:`~flask.Flask.template_filter` decorator.
+如果你要在 Jinja2 中注册你自己的过滤器，你有两种方法。你可以把它们手动添加到
+应用的 :attr:`~flask.Flask.jinja_env` 或者使用
+:meth:`~flask.Flask.template_filter` 装饰器。
 
-The two following examples work the same and both reverse an object::
+下面两个例子作用相同，都是反转一个对象::
 
     @app.template_filter('reverse')
     def reverse_filter(s):
@@ -149,37 +145,31 @@ The two following examples work the same and both reverse an object::
         return s[::-1]
     app.jinja_env.filters['reverse'] = reverse_filter
 
-In case of the decorator the argument is optional if you want to use the
-function name as name of the filter.  Once registered, you can use the filter
-in your templates in the same way as Jinja2's builtin filters, for example if
-you have a Python list in context called `mylist`::
+在使用装饰器的情况下，如果你想以函数名作为过滤器名，参数是可选的。注册之后，
+你可以在模板中像使用 Jinja2 内置过滤器一样使用你的过滤器，例如你在上下文中有
+一个名为 `mylist` 的 Python 列表::
 
     {% for x in mylist | reverse %}
     {% endfor %}
 
 
-Context Processors
+上下文处理器
 ------------------
 
-To inject new variables automatically into the context of a template
-context processors exist in Flask.  Context processors run before the
-template is rendered and have the ability to inject new values into the
-template context.  A context processor is a function that returns a
-dictionary.  The keys and values of this dictionary are then merged with
-the template context, for all templates in the app::
+Flask 中的上下文处理器自动向模板的上下文中插入新变量。上下文处理器在模板
+渲染之前运行，并且可以在模板上下文中插入新值。上下文处理器是一个返回字典
+的函数。这个字典的键值将与应用中的所有模板上下文联合::
 
     @app.context_processor
     def inject_user():
         return dict(user=g.user)
 
-The context processor above makes a variable called `user` available in
-the template with the value of `g.user`.  This example is not very
-interesting because `g` is available in templates anyways, but it gives an
-idea how this works.
+上面的上下文处理器使得一个名为 `user` ，值为 `g.user` 的变量在模板中可用。
+这个例子不是很有意思，因为 `g` 无论如何在模板中都是可用的，但是它已经解释
+了上下文处理器是如何工作的。
 
-Variables are not limited to values; a context processor can also make
-functions available to templates (since Python allows passing around
-functions)::
+变量不仅限于值；一个上下文处理器也可以使函数在模板中可用（由于 Python 允
+许传递函数）::
 
     @app.context_processor
     def utility_processor():
@@ -187,11 +177,9 @@ functions)::
             return u'{0:.2f}{1}.format(amount, currency)
         return dict(format_price=format_price)
 
-The context processor above makes the `format_price` function available to all
-templates::
+上面的上下文处理器使得 `format_price` 函数在所有模板中可用::
 
     {{ format_price(0.33) }}
 
-You could also build `format_price` as a template filter (see
-:ref:`registering-filters`), but this demonstrates how to pass functions in a
-context processor.
+你也可以构建 `format_price` 为一个模板处理器（见
+:ref:`registering-filters` ），但这展示了上下文处理器如何传递一个函数。
