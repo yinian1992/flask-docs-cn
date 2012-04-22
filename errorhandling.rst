@@ -242,7 +242,7 @@ SQLAlchemy 在它的核心中大量地使用日志。而在 :mod:`logging` 包�
        DEBUG: True
        DEBUG_WITH_APTANA: True
 
-然后在你应用的入口（ main.py ），你可以有下面的内容::
+然后在你应用的入口（ main.py ），你可以写入下面的内容::
 
    if __name__ == "__main__":
        # To allow aptana to receive errors, set use_debugger=False
