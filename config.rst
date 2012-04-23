@@ -238,8 +238,8 @@ Flask 被设计为需要配置来启动应用。你可以在代码中硬编码�
     配置值前，在你自己的配置文件中导入它。
 -   使用环境变量来在配置间切换。这样可以从 Python 解释器之外完成，使开发
     和部署更容易，因为你可以在不触及代码的情况下快速简便地切换配置。如果你
-	经常在不同的项目中作业，你甚至可以创建激活一个 virtualenv 并导出开发
-	配置的脚本。
+    经常在不同的项目中作业，你甚至可以创建激活一个 virtualenv 并导出开发
+    配置的脚本。
 -   使用 `fabric`_ 之类的工具在生产环境中独立地向生产服务器推送代码和配置。
     参阅 :ref:`fabric-deployment` 模式。
 
@@ -253,74 +253,61 @@ Flask 被设计为需要配置来启动应用。你可以在代码中硬编码�
 
 .. versionadded:: 0.8
 
-Flask 0.8 引入了示例文件夹。
-Flask 0.8 introduces instance folders.  Flask for a long time made it
-possible to refer to paths relative to the application's folder directly
-(via :attr:`Flask.root_path`).  This was also how many developers loaded
-configurations stored next to the application.  Unfortunately however this
-only works well if applications are not packages in which case the root
-path refers to the contents of the package.
+Flask 0.8 引入了示例文件夹。 Flask 在很长时间使得直接引用相对应用文件夹
+的路径成为可能。这也是许多开发者加载存储在载入应用旁边的配置的方法。不幸
+的是，这只会在应用不是包，即根路径指向包内容的情况下才能工作。
 
-With Flask 0.8 a new attribute was introduced:
-:attr:`Flask.instance_path`.  It refers to a new concept called the
-“instance folder”.  The instance folder is designed to not be under
-version control and be deployment specific.  It's the perfect place to
-drop things that either change at runtime or configuration files.
+在 Flask 0.8 中，引入了 :attr:`Flask.instance_path` 并提出了“实例文件夹”
+的新概念。实例文件夹被为不使用版本控制和特定的部署而设计。这是放置运行时
+更改的文件和配置文件的最佳位置。
 
-You can either explicitly provide the path of the instance folder when
-creating the Flask application or you can let Flask autodetect the
-instance folder.  For explicit configuration use the `instance_path`
-parameter::
+你可以在创建 Flask 应用时显式地提供实例文件夹的路径，也可以让 Flask 自
+动找到它。对于显式的配置，使用 `instance_path` 参数::
 
     app = Flask(__name__, instance_path='/path/to/instance/folder')
 
-Please keep in mind that this path *must* be absolute when provided.
+请注意给出的 *一定* 是绝对路径。
 
-If the `instance_path` parameter is not provided the following default
-locations are used:
+如果 `instance_path` 参数没有赋值，会适用下面默认的位置:
 
--   Uninstalled module::
+-   已卸载的模块::
 
         /myapp.py
         /instance
 
--   Uninstalled package::
+-   已卸载的包::
 
         /myapp
             /__init__.py
         /instance
 
--   Installed module or package::
+-   已安装的包或模块::
 
         $PREFIX/lib/python2.X/site-packages/myapp
         $PREFIX/var/myapp-instance
 
-    ``$PREFIX`` is the prefix of your Python installation.  This can be
-    ``/usr`` or the path to your virtualenv.  You can print the value of
-    ``sys.prefix`` to see what the prefix is set to.
+    ``$PREFIX`` 是你 Python 安装的前缀。这个前缀可以是 ``/usr`` 或者你
+    virtualenv 的路径。你可以打印 ``sys.prefix`` 的值来查看前缀被设置成
+    了什么。
 
-Since the config object provided loading of configuration files from
-relative filenames we made it possible to change the loading via filenames
-to be relative to the instance path if wanted.  The behavior of relative
-paths in config files can be flipped between “relative to the application
-root” (the default) to “relative to instance folder” via the
-`instance_relative_config` switch to the application constructor::
+既然配置对象提供从相对文件名来载入配置的方式，那么我们也使得它从相对实例
+路径的文件名加载成为可能，如果你想这样做。配置文件中的相对路径的行为可以
+在“相对应用的根目录”（默认）和 “相对实例文件夹”中切换，后者通过应用构造函
+数的 `instance_relative_config` 开关实现::
 
     app = Flask(__name__, instance_relative_config=True)
 
-Here is a full example of how to configure Flask to preload the config
-from a module and then override the config from a file in the config
-folder if it exists::
+这里有一个配置 Flask 来从模块预载入配置并覆盖配置文件夹中配置文件（如果
+存在）的完整例子::
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object('yourapplication.default_settings')
     app.config.from_pyfile('application.cfg', silent=True)
 
-The path to the instance folder can be found via the
-:attr:`Flask.instance_path`.  Flask also provides a shortcut to open a
-file from the instance folder with :meth:`Flask.open_instance_resource`.
+实例文件夹的路径可以在 :attr:`Flask.instance_path` 找到。 Flask 也提供了
+一个打开实例文件夹中文件的捷径，就是 :meth:`Flask.open_instance_resource` 。
 
-Example usage for both::
+两者的使用示例::
 
     filename = os.path.join(app.instance_path, 'application.cfg')
     with open(filename) as f:
