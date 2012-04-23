@@ -1,68 +1,55 @@
 .. _app-context:
 
-The Application Context
+应用上下文
 =======================
 
 .. versionadded:: 0.9
 
-One of the design ideas behind Flask is that there are two different
-“states” in which code is executed.  The application setup state in which
-the application implicitly is on the module level.  It starts when the
-:class:`Flask` object is instantiated, and it implicitly ends when the
-first request comes in.  While the application is in this state a few
-assumptions are true:
+Flask 背后的设计理念之一就是，代码执行有两种不同的“状态”（states）。应用
+隐式地处于模块层时配置状态。这始于 :class:`Flask` 对象实例化，并且当第一
+个请求传入时，会隐式地结束。当应用处于这种状态时，有如下假设:
 
--   the programmer can modify the application object safely.
--   no request handling happened so far
--   you have to have a reference to the application object in order to
-    modify it, there is no magic proxy that can give you a reference to
-    the application object you're currently creating or modifying.
+-   程序员可以安全地修改应用对象
+-   之前没有发生过任何请求处理
+-   你需要一个应用对象的引用来修改它，没有魔术代理可以给你一个你正在创建
+    或修改的应用对象的引用
+    
 
-On the contrast, during request handling, a couple of other rules exist:
+相反，在请求处理是，有其它的规则:
 
--   while a request is active, the context local objects
-    (:data:`flask.request` and others) point to the current request.
--   any code can get hold of these objects at any time.
+-   当请求活动时，上下文本地对象（ :data:`flask.request` 和其它）指向当
+    前的请求
+-   任何代码都可以在任何时间与这些对象通信
 
-There is a third state which is sitting in between a little bit.
-Sometimes you are dealing with an application in a way that is similar to
-how you interact with applications during request handling just that there
-is no request active.  Consider for instance that you're sitting in an
-interactive Python shell and interacting with the application, or a
-command line application.
 
-The application context is what powers the :data:`~flask.current_app`
-context local.
+这里有一个第三种情况，有一点点差异。有时，你正在用类似请求处理时方式来
+与应用交互，即使并没有活动的请求。想象一下你用交互式 Python shell 与应用
+交互的情况，或是一个命令行应用的情况。
 
-Purpose of the Application Context
+:data:`~flask.current_app` 上下文本地变量就是应用上下文驱动的。
+
+应用上下文的作用
 ----------------------------------
 
-The main reason for the application's context existance is that in the
-past a bunch of functionality was attached to the request context in lack
-of a better solution.  Since one of the pillar's of Flask's design is that
-you can have more than one application in the same Python process.
+应用上下文存在的主要原因是，在过去，没有更好的方式来在请求上下文中附加
+一堆函数，因为 Flask 设计的支柱之一是你可以在一个 Python 进程中拥有多个
+应用。
 
-So how does the code find the “right” application?  In the past we
-recommended passing applications around explicitly, but that caused issues
-with libraries that were not designed with that in mind for libraries for
-which it was too inconvenient to make this work.
+那么代码如何找到“正确的”应用？在过去，我们推荐显式地到处传递应用，但是这
+导致没有用这种想法设计的库的问题，因为让库实现这种想法太不方便。
 
-A common workaround for that problem was to use the
-:data:`~flask.current_app` proxy later on, which was bound to the current
-request's application reference.  Since however creating such a request
-context is an unnecessarily expensive operation in case there is no
-request around, the application context was introduced.
+解决上述问题的常用方法是使用后面将会提到的 :data:`~flask.current_app` 代
+理，它被限制在当前请求的应用引用。既然无论如何在没有请求时创建一个这样的
+请求上下文是一个没有必要的昂贵操作，那么就引入了应用上下文。
 
-Creating an Application Context
+创建应用上下文
 -------------------------------
 
-To make an application context there are two ways.  The first one is the
-implicit one: whenever a request context is pushed, an application context
-will be created alongside if this is necessary.  As a result of that, you
-can ignore the existance of the application context unless you need it.
+有两种方式来创建应用上下文。第一种是隐式的：无论何时一个请求上下文被压栈，
+一个应用上下文会并排创建，如果这是必须的。由于这样的结果，你可以忽略应用
+上下文的存在，除非你需要它。
 
-The second way is the explicit way using the
-:meth:`~flask.Flask.app_context` method::
+第二种是显式地使用 :meth:`~flask.Flask.app_context` 方法::
 
     from flask import Flask, current_app
 
@@ -71,18 +58,15 @@ The second way is the explicit way using the
         # within this block, current_app points to app.
         print current_app.name
 
-The application context is also used by the :func:`~flask.url_for`
-function in case a ``SERVER_NAME`` was configured.  This allows you to
-generate URLs even in the absence of a request.
+在配置了 ``SERVER_NAME`` 时3，应用上下文也被用于 func:`~flask.url_for` 函
+数。这允许你在没有请求时生成 URL 。
 
-Locality of the Context
+应用上下文的作用域
 -----------------------
 
-The application context is created and destroyed as necessary.  It never
-moves between threads and it will not be shared between requests.  As such
-it is the perfect place to store database connection information and other
-things.  The internal stack object is called :data:`flask._app_ctx_stack`.
-Extensions are free to store additional information on the topmost level,
-assuming they pick a sufficiently unique name.
+应用上下文会会必要地创建并销毁。它不会在线程间移动，并且也不会在请求间共享。
+如此，它是一个存储数据库连接信息或是别的东西的最佳位置。内部的栈对象名为
+:data:`flask._app_ctx_stack` 。扩展可以自由的在最高水平存储额外的信息，如果
+它们选用了相当唯一的名称。
 
-For more information about that, see :ref:`extension-dev`.
+更多详情见 :ref:`extension-dev` 。
