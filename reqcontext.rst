@@ -157,11 +157,7 @@ this runs after request
 ----------------
 
 Flask 中提供的一些对象是其它对象的代理。背后的原因是，这些代理在线程间共享，
-并且它们在必要的情景中被调度到限定在一个线程的实际的对象。
-Some of the objects provided by Flask are proxies to other objects.  The
-reason behind this is that these proxies are shared between threads and
-they have to dispatch to the actual object bound to a thread behind the
-scenes as necessary.
+并且它们在必要的情景中被调度到限定在一个线程中的实际的对象。
 
 大多数时间你不需要关心它，但是在一些例外情况中，知道一个对象实际上是代理是
 有益的:
