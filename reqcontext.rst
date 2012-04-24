@@ -1,19 +1,18 @@
 .. _request-context:
 
-The Request Context
+请求上下文
 ===================
 
-This document describes the behavior in Flask 0.7 which is mostly in line
-with the old behavior but has some small, subtle differences.
+这部分文档描述了在 Flask 0.7 中的行为，与旧的行为基本一致，但有细小微妙的
+差异。
 
-It is recommended that you read the :ref:`app-context` chapter first.
+这里推荐先阅读 :ref:`app-context` 章节。
 
-Diving into Context Locals
+深入上下文作用域
 --------------------------
 
-Say you have a utility function that returns the URL the user should be
-redirected to.  Imagine it would always redirect to the URL's ``next``
-parameter or the HTTP referrer or the index page::
+比如说你有一个应用函数返回用户应该跳转到的 URL 。想象它总是会跳转到 URL
+的 ``next`` 参数，或 HTTP referrer ，或索引页::
 
     from flask import request, url_for
 
@@ -22,48 +21,45 @@ parameter or the HTTP referrer or the index page::
                request.referrer or \
                url_for('index')
 
-As you can see, it accesses the request object.  If you try to run this
-from a plain Python shell, this is the exception you will see:
+如你所见，它访问了请求对象。当你试图在纯 Python shell 中运行这段代码时，
+你会看见这样的异常:
 
 >>> redirect_url()
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
 AttributeError: 'NoneType' object has no attribute 'request'
 
-That makes a lot of sense because we currently do not have a request we
-could access.  So we have to make a request and bind it to the current
-context.  The :attr:`~flask.Flask.test_request_context` method can create
-us a :class:`~flask.ctx.RequestContext`:
+这有很大意义，因为我们当前并没有可以访问的请求。所以我们需要制造一个
+请求并且绑定到当前的上下文。 :attr:`~flask.Flask.test_request_context` 方
+法为我们创建一个 :class:`~flask.ctx.RequestContext`:
 
 >>> ctx = app.test_request_context('/?next=http://example.com/')
 
-This context can be used in two ways.  Either with the `with` statement
-or by calling the :meth:`~flask.ctx.RequestContext.push` and
-:meth:`~flask.ctx.RequestContext.pop` methods:
+可以通过两种方式利用这个上下文：使用 `with` 声明或是调用
+:meth:`~flask.ctx.RequestContext.push` 和
+:meth:`~flask.ctx.RequestContext.pop` 方法:
 
 >>> ctx.push()
 
-From that point onwards you can work with the request object:
+从这点开始，你可以使用请求对象:
 
 >>> redirect_url()
 u'http://example.com/'
 
-Until you call `pop`:
+直到你调用 `pop`:
 
 >>> ctx.pop()
 
-Because the request context is internally maintained as a stack you can
-push and pop multiple times.  This is very handy to implement things like
-internal redirects.
+因为请求上下文在内部作为一个栈来维护，说以你可以多次压栈出栈。这在实现
+内部重定向之类的东西时很方便。
 
-For more information of how to utilize the request context from the
-interactive Python shell, head over to the :ref:`shell` chapter.
+更多如何从交互式 Python shell 中利用请求上下文的信息，请见 :ref:`shell`
+章节。
 
-How the Context Works
+上下文如何工作
 ---------------------
 
-If you look into how the Flask WSGI application internally works, you will
-find a piece of code that looks very much like this::
+如果你研究 Flask WSGI 应用内部如何工作，你会找到和这非常相似的一段代码::
 
     def wsgi_app(self, environ):
         with self.request_context(environ):
@@ -73,78 +69,60 @@ find a piece of code that looks very much like this::
                 response = self.make_response(self.handle_exception(e))
             return response(environ, start_response)
 
-The method :meth:`~Flask.request_context` returns a new
-:class:`~flask.ctx.RequestContext` object and uses it in combination with
-the `with` statement to bind the context.  Everything that is called from
-the same thread from this point onwards until the end of the `with`
-statement will have access to the request globals (:data:`flask.request`
-and others).
+:meth:`~Flask.request_context` 方法返回一个新的
+:class:`~flask.ctx.RequestContext` 对象，并结合 `with` 声明来绑定上下文。
+从相同线程中被调用的一切，直到 `with` 声明结束前，都可以访问全局的请求
+变量（ :data:`flask.request` 和其它）。
 
-The request context internally works like a stack: The topmost level on
-the stack is the current active request.
-:meth:`~flask.ctx.RequestContext.push` adds the context to the stack on
-the very top, :meth:`~flask.ctx.RequestContext.pop` removes it from the
-stack again.  On popping the application's
-:func:`~flask.Flask.teardown_request` functions are also executed.
+请求上下文内部工作如同一个栈。栈顶是当前活动的请求。
+:meth:`~flask.ctx.RequestContext.push` 把上下文添加到栈顶，
+:meth:`~flask.ctx.RequestContext.pop` 把它移除栈。在出栈时，应用的
+:func:`~flask.Flask.teardown_request` 函数也会被执行。
 
-Another thing of note is that the request context will automatically also
-create an :ref:`application context <app-context>` when it's pushed and
-there is no application context for that application so far.
+另一件需要注意的事是，请求上下文被压入栈时，并且没有当前应用的应用上下文，
+它会自动创建一个 :ref:`app-context` 。
 
 .. _callbacks-and-errors:
 
-Callbacks and Errors
+回调和错误
 --------------------
 
-What happens if an error occurs in Flask during request processing?  This
-particular behavior changed in 0.7 because we wanted to make it easier to
-understand what is actually happening.  The new behavior is quite simple:
+在 Flask 中，请求处理时发生一个错误时会发生什么？这个特殊的行为在 0.7 中
+变更了，因为我们想要更简单地得知实际发生了什么。新的行为相当简单:
 
-1.  Before each request, :meth:`~flask.Flask.before_request` functions are
-    executed.  If one of these functions return a response, the other
-    functions are no longer called.  In any case however the return value
-    is treated as a replacement for the view's return value.
+1.  在每个请求之前，执行 :meth:`~flask.Flask.before_request` 上绑定的函数。
+    如果这些函数中的某个返回了一个响应，其它的函数将不再被调用。任何情况
+    下，无论如何这个返回值都会替换视图的返回值。
+    
+2.  如果 :meth:`~flask.Flask.before_request` 上绑定的函数没有返回一个响应，
+    常规的请求处理将会生效，匹配的视图函数有机会返回一个响应。
+    
+3.  视图的返回值之后会被转换成一个实际的响应对象，并交给
+    meth:`~flask.Flask.after_request` 上绑定的函数适当地替换或修改它。
+    
+4.  在请求的最后，会执行 :meth:`~flask.Flask.teardown_request` 上绑定的函
+    数。这总会发生，即使在一个未处理的异常抛出后或是没有请求前处理器执行过
+    （例如在测试环境中你有时会想不执行请求前回调）。
 
-2.  If the :meth:`~flask.Flask.before_request` functions did not return a
-    response, the regular request handling kicks in and the view function
-    that was matched has the chance to return a response.
+现在错误时会发生什么？在生产模式中，如果一个异常没有被捕获，将调用
+500 internal server 的处理。在生产模式中，即便异常没有被处理过，也会冒泡
+给 WSGI 服务器。如此，像交互式调试器这样的东西可以提供丰富的调试信息。
 
-3.  The return value of the view is then converted into an actual response
-    object and handed over to the :meth:`~flask.Flask.after_request`
-    functions which have the chance to replace it or modify it in place.
+在 0.7 中做出的重大变更，是内部服务器错误不再被请求后回调传递处理，而且
+请求后回调也不再保证会执行。这使得内部的调度代码更简洁，易于定制和理解。
 
-4.  At the end of the request the :meth:`~flask.Flask.teardown_request`
-    functions are executed.  This always happens, even in case of an
-    unhandled exception down the road or if a before-request handler was
-    not executed yet or at all (for example in test environments sometimes
-    you might want to not execute before-request callbacks).
+新的绑定于销毁请求的函数被认为是用于代替那些请求的最后绝对要发生的事。
 
-Now what happens on errors?  In production mode if an exception is not
-caught, the 500 internal server handler is called.  In development mode
-however the exception is not further processed and bubbles up to the WSGI
-server.  That way things like the interactive debugger can provide helpful
-debug information.
-
-An important change in 0.7 is that the internal server error is now no
-longer post processed by the after request callbacks and after request
-callbacks are no longer guaranteed to be executed.  This way the internal
-dispatching code looks cleaner and is easier to customize and understand.
-
-The new teardown functions are supposed to be used as a replacement for
-things that absolutely need to happen at the end of request.
-
-Teardown Callbacks
+销毁回调
 ------------------
 
-The teardown callbacks are special callbacks in that they are executed at
-at different point.  Strictly speaking they are independent of the actual
-request handling as they are bound to the lifecycle of the
-:class:`~flask.ctx.RequestContext` object.  When the request context is
-popped, the :meth:`~flask.Flask.teardown_request` functions are called.
+销毁回调是是特殊的回调，因为它们在不同的点上执行。严格地说，它们不依赖实际
+的请求处理，因为它们限定在 :class:`~flask.ctx.RequestContext` 的生命周期。
+当请求上下文出栈时， :meth:`~flask.Flask.teardown_request` 上绑定的函数会
+被调用。
 
-This is important to know if the life of the request context is prolonged
-by using the test client in a with statement or when using the request
-context from the command line::
+这对于了解请求上下文的寿命是否因为在 with 声明中使用测试客户端或在命令行
+中使用请求上下文时被延长很重要::
 
     with app.test_client() as client:
         resp = client.get('/foo')
@@ -156,7 +134,7 @@ context from the command line::
     # are called.  Alternatively the same thing happens if another
     # request was triggered from the test client
 
-It's easy to see the behavior from the command line:
+从这些命令行操作中，很容易看出它的行为:
 
 >>> app = Flask(__name__)
 >>> @app.teardown_request
@@ -169,55 +147,47 @@ It's easy to see the behavior from the command line:
 this runs after request
 >>>
 
-Keep in mind that teardown callbacks are always executed, even if
-before-request callbacks were not executed yet but an exception happened.
-Certain parts of the test system might also temporarily create a request
-context without calling the before-request handlers.  Make sure to write
-your teardown-request handlers in a way that they will never fail.
+注意销毁回调总是会被执行，即使没有请求前回调执行过，或是异常发生。测试系
+统的特定部分也会临时地在不调用请求前处理器的情况下创建请求上下文。确保你
+写的请求销毁处理器不会报错。
 
 .. _notes-on-proxies:
 
-Notes On Proxies
+注意代理
 ----------------
 
+Flask 中提供的一些对象是其它对象的代理。背后的原因是，这些代理在线程间共享，
+并且它们在必要的情景中被调度到限定在一个线程的实际的对象。
 Some of the objects provided by Flask are proxies to other objects.  The
 reason behind this is that these proxies are shared between threads and
 they have to dispatch to the actual object bound to a thread behind the
 scenes as necessary.
 
-Most of the time you don't have to care about that, but there are some
-exceptions where it is good to know that this object is an actual proxy:
+大多数时间你不需要关心它，但是在一些例外情况中，知道一个对象实际上是代理是
+有益的:
 
--   The proxy objects do not fake their inherited types, so if you want to
-    perform actual instance checks, you have to do that on the instance
-    that is being proxied (see `_get_current_object` below).
--   if the object reference is important (so for example for sending
-    :ref:`signals`)
+-   代理对象不会伪造它们继承的类型，所以如果你想运行真正的实例检查，你需要
+    在被代理的实例上这么做（见下面的 `_get_current_object` ）。
+-   如果对象引用是重要的（例如发送 :ref:`signals` ）
 
-If you need to get access to the underlying object that is proxied, you
-can use the :meth:`~werkzeug.local.LocalProxy._get_current_object` method::
+如果你需要访问潜在的被代理的对象，你可以使用
+:meth:`~werkzeug.local.LocalProxy._get_current_object` 方法::
 
     app = current_app._get_current_object()
     my_signal.send(app)
 
-Context Preservation on Error
+错误时的上下文保护
 -----------------------------
 
-If an error occurs or not, at the end of the request the request context
-is popped and all data associated with it is destroyed.  During
-development however that can be problematic as you might want to have the
-information around for a longer time in case an exception occurred.  In
-Flask 0.6 and earlier in debug mode, if an exception occurred, the
-request context was not popped so that the interactive debugger can still
-provide you with important information.
+无论错误出现与否，在请求的最后，请求上下文会出栈，并且相关的所有数据会被
+销毁。在开发中，当你想在异常发生时，长期地获取周围的信息，这会成为麻烦。
+在 Flask 0.6 和更早版本中的调试模式，如果发生异常，请求上下文不会被弹出栈，
+这样交互式调试器才能提供给你重要信息。
 
-Starting with Flask 0.7 you have finer control over that behavior by
-setting the ``PRESERVE_CONTEXT_ON_EXCEPTION`` configuration variable.  By
-default it's linked to the setting of ``DEBUG``.  If the application is in
-debug mode the context is preserved, in production mode it's not.
+从 Flask 0.7 开始，我们设定 ``PRESERVE_CONTEXT_ON_EXCEPTION`` 配置变量来
+更好地控制该行为。这个值默认与 ``DEBUG`` 的设置相关。当应用工作在调试模式
+下时，上下文会被保护，而生产模式下相反。
 
-Do not force activate ``PRESERVE_CONTEXT_ON_EXCEPTION`` in production mode
-as it will cause your application to leak memory on exceptions.  However
-it can be useful during development to get the same error preserving
-behavior as in development mode when attempting to debug an error that
-only occurs under production settings.
+不要在生产模式强制激活 ``PRESERVE_CONTEXT_ON_EXCEPTION`` ，因为它会导致在
+异常时应用的内存泄露。不过，它在开发时获取开发模式下相同的错误行为来试图
+调试一个只有生产设置下才发生的错误时很有用。
