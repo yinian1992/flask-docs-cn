@@ -98,7 +98,7 @@ u'http://example.com/'
     常规的请求处理将会生效，匹配的视图函数有机会返回一个响应。
     
 3.  视图的返回值之后会被转换成一个实际的响应对象，并交给
-    meth:`~flask.Flask.after_request` 上绑定的函数适当地替换或修改它。
+    :meth:`~flask.Flask.after_request` 上绑定的函数适当地替换或修改它。
     
 4.  在请求的最后，会执行 :meth:`~flask.Flask.teardown_request` 上绑定的函
     数。这总会发生，即使在一个未处理的异常抛出后或是没有请求前处理器执行过
