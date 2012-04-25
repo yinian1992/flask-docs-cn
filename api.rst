@@ -5,12 +5,11 @@ API
 
 .. module:: flask
 
-This part of the documentation covers all the interfaces of Flask.  For
-parts where Flask depends on external libraries, we document the most
-important right here and provide links to the canonical documentation.
+这部分文档涵盖了 Flask 的所有接口。对于那些 Flask 依赖外部库的部分，我们
+这里描述得最详细，并且提供其官方文档的链接。
 
 
-Application Object
+应用对象
 ------------------
 
 .. autoclass:: Flask
@@ -18,14 +17,14 @@ Application Object
    :inherited-members:
 
 
-Blueprint Objects
+蓝图对象
 -----------------
 
 .. autoclass:: Blueprint
    :members:
    :inherited-members:
 
-Incoming Request Data
+进入的请求对象
 ---------------------
 
 .. autoclass:: Request
