@@ -52,3 +52,4 @@ API 参考
    upgrading
    changelog
    license
+   glossary
