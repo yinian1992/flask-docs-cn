@@ -17,7 +17,7 @@ Configuration / Config
   配置
 
 Context Locals
-  上下文作用域
+  上下文局部变量
 
 Context-local
   上下文本地（局域）的
@@ -30,6 +30,9 @@ Handler
 
 Handling
   处理
+
+Header
+  标头
 
 Logger
   日志记录器
