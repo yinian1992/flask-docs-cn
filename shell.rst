@@ -12,7 +12,7 @@ Python 拥有的交互式 Shell 是人人都喜欢它的一个重要原因。交
 
 然而这里有一些易于获得的助手，可以帮助您在 Shell 遨游时获得更为
 愉悦的体验。交互式控制台回话的一个重要问题是，您并不是像在浏览器
-当中那样激发一个请求，因此 :data:`~flask.g` 、:data:`~flask.request`
+当中那样激发一个请求，因此 :data:`~flask.g` 和 :data:`~flask.request`
 以及其他的一些函数不能使用。然而您想要测试的代码也许依赖他们，
 那么让我们瞧瞧该如何解决这个问题。
 
@@ -61,7 +61,7 @@ Python 拥有的交互式 Shell 是人人都喜欢它的一个重要原因。交
 >>> app.preprocess_request()
 
 请注意， :meth:`~flask.Flask.preprocess_request` 函数可能会返回
-一个响应对象。这是，忽略它就好了。
+一个响应对象。这时，忽略它就好了。
 
 要关闭一个请求，您需要在请求后的调用函数(由 :meth:`~flask.Flask.process_response`
 函数激发)运行之前耍一些小小的把戏:
@@ -69,11 +69,6 @@ Python 拥有的交互式 Shell 是人人都喜欢它的一个重要原因。交
 >>> app.process_response(app.response_class())
 <Response 0 bytes [200 OK]>
 >>> ctx.pop()
-
-The functions registered as :meth:`~flask.Flask.teardown_request` are
-automatically called when the context is popped.  So this is the perfect
-place to automatically tear down resources that were needed by the request
-context (such as database connections).
 
 被注册为 :meth:`~flask.Flask.teardown_request` 的函数将会在
 上下文环境改变之后自动执行。所以这是用来销毁请求上下文(如数据库
@@ -83,10 +78,10 @@ context (such as database connections).
 进一步提升 Shell 使用体验
 --------------------------------------
 
-如果您喜欢在 Shell 里实验您的新点子，您可以创建一个包含你想要
-导入交互式回话中的模块。在这里，您也可以定义更多的辅助方法用来
-完成一些常用的操作，例如初始化数据库、删除一个数据表等。
+如果您喜欢在 Shell 里实验您的新点子，您可以创建一个包含你想要导入交互式
+回话中的东西的的模块。在这里，您也可以定义更多的辅助方法用来完成一些常用的
+操作，例如初始化数据库、删除一个数据表等。
 
-把他们放到一个模块里就好（比如 `shelltools` 然后在 Shell 中导入它）
+把他们放到一个模块里（比如 `shelltools` 然后在 Shell 中导入它）:
 
 >>> from shelltools import *
