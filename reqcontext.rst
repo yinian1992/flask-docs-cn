@@ -153,7 +153,7 @@ this runs after request
 
 .. _notes-on-proxies:
 
-注意代理
+留意代理
 ----------------
 
 Flask 中提供的一些对象是其它对象的代理。背后的原因是，这些代理在线程间共享，
