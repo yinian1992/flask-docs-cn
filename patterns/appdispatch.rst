@@ -164,7 +164,7 @@ Django 和 Flask 的应用运行在同一个解释器下。这么做的用处依
                 app = self.default_app
             return app(environ, start_response)
 
-这种做法和子域名分发的方法的区别是，这里如果创建应用对象的函数返回了 `None`,
+这种例子与之前子域名调度那里的区别是，这里如果创建应用对象的函数返回了 `None`,
 那么请求就被降级回推到另一个应用当中::
 
     from myapplication import create_app, default_app, get_user_for_prefix
