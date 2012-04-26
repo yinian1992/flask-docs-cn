@@ -1,14 +1,7 @@
 .. _patterns:
 
-Flask 代码模板
+Flask 代码模式
 ==================
-
-Certain things are common enough that the chances are high you will find
-them in most web applications.  For example quite a lot of applications
-are using relational databases and user authentication.  In that case,
-chances are they will open a database connection at the beginning of the
-request and get the information of the currently logged in user.  At the
-end of the request, the database connection is closed again.
 
 某些东西非常通用，以至于你有很大的机会在绝大部分 Web 应用中，都能找到
 他们的身影。例如相当多的应用在使用关系数据库而且包含用户注册和认证模块。
