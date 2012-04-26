@@ -1,38 +1,34 @@
 .. _app-dispatch:
 
-Application Dispatching
+应用调度
 =======================
 
-Application dispatching is the process of combining multiple Flask
-applications on the WSGI level.  You can not only combine Flask
-applications into something larger but any WSGI application.  This would
-even allow you to run a Django and a Flask application in the same
-interpreter side by side if you want.  The usefulness of this depends on
-how the applications work internally.
+应用调度指的是在 WSGI 层次合并运行多个 Flask 的应用的进程。您不能将
+Flask 与更大的东西合并，但是可以和 WSGI 应用交叉。这甚至允许您将
+Django 和 Flask 的应用运行在同一个解释器下。这么做的用处依赖于
+这个应用内部是如何运行的。
 
-The fundamental difference from the :ref:`module approach
-<larger-applications>` is that in this case you are running the same or
-different Flask applications that are entirely isolated from each other.
-They run different configurations and are dispatched on the WSGI level.
+与模块 :ref:`module approach <larger-applications>` 的区别在于，在此时
+您运行的不同 Flask 应用是相互之间完全独立的，他们运行在不同的配置，而且
+在不同的 WSGI 层次被调度。
 
 
-Working with this Document
+如何使用此文档
 --------------------------
 
-Each of the techniques and examples below results in an ``application`` object
-that can be run with any WSGI server.  For production, see :ref:`deployment`.
-For development, Werkzeug provides a builtin server for development available
-at :func:`werkzeug.serving.run_simple`::
+下面的所有技巧和例子都将最终得到一个 ``application`` 对象，这个对象
+可以在任何 WSGI 服务器上运行。在生产环境下，请参看 :ref:`deployment` 
+相关章节。在开发时，Werkzeug 提供了一个提供了一个内置的开发服务器，
+可以通过 :func:`werkzeug.serving.run_simple` 函数使用::
 
     from werkzeug.serving import run_simple
     run_simple('localhost', 5000, application, use_reloader=True)
 
-Note that :func:`run_simple <werkzeug.serving.run_simple>` is not intended for
-use in production.  Use a :ref:`full-blown WSGI server <deployment>`.
+注意，:func:`run_simple <werkzeug.serving.run_simple>` 函数不是为生产
+用途设计的，发布应用时可以使用 :ref:`full-blown WSGI server <deployment>` 。
 
-In order to use the interactive debuggger, debugging must be enabled both on
-the application and the simple server, here is the "hello world" example with
-debugging and :func:`run_simple <werkzeug.serving.run_simple>`::
+为了能使用交互式调试器，调试必须在应用和简易开发服务器两边都被激活。
+下面是一个带有调试功能的 “Hello World” 的例子::
 
     from flask import Flask
     from werkzeug.serving import run_simple
@@ -49,18 +45,16 @@ debugging and :func:`run_simple <werkzeug.serving.run_simple>`::
                    use_reloader=True, use_debugger=True, use_evalex=True)
 
 
-Combining Applications
+合并应用
 ----------------------
 
-If you have entirely separated applications and you want them to work next
-to each other in the same Python interpreter process you can take
-advantage of the :class:`werkzeug.wsgi.DispatcherMiddleware`.  The idea
-here is that each Flask application is a valid WSGI application and they
-are combined by the dispatcher middleware into a larger one that
-dispatched based on prefix.
+如果您有一些完全独立的应用程序，而您希望他们使用同一个 Python 解释器，
+背靠背地运行，您可以利用 :class:`werkzeug.wsgi.DispatcherMiddleware` 这个类。
+这里，每个 Flask 应用对象都是一个有效的 WSGI 应用对象，而且他们在
+调度中间层当中被合并进入一个规模更大的应用，并通过前缀来实现调度。
 
-For example you could have your main application run on `/` and your
-backend interface on `/backend`::
+例如，您可以使您的主应用运行在 `/` 路径，而您的后台
+接口运行在 `/backend` 路径::
 
     from werkzeug.wsgi import DispatcherMiddleware
     from frontend_app import application as frontend
@@ -71,27 +65,23 @@ backend interface on `/backend`::
     })
 
 
-Dispatch by Subdomain
+通过子域名调度
 ---------------------
 
-Sometimes you might want to use multiple instances of the same application
-with different configurations.  Assuming the application is created inside
-a function and you can call that function to instantiate it, that is
-really easy to implement.  In order to develop your application to support
-creating new instances in functions have a look at the
-:ref:`app-factories` pattern.
+有时，您希望使用对一个应用使用不同的配置，对每个配置运行一个实例，从而有
+多个实例存在。假设应用对象是在函数中生成的，您就可以调用这个函数并实例化
+一个实例，这相当容易实现。为了使您的应用支持在函数中创建新的对象，请先参考
+:ref:`app-factories` 模式。
 
-A very common example would be creating applications per subdomain.  For
-instance you configure your webserver to dispatch all requests for all
-subdomains to your application and you then use the subdomain information
-to create user-specific instances.  Once you have your server set up to
-listen on all subdomains you can use a very simple WSGI application to do
-the dynamic application creation.
+一个相当通用的例子，那就是为不同的子域名创建不同的应用对象。比如
+您将您的Web服务器设置为将所有的子域名都分发给您的引用，而您接下来
+使用这些子域名信息创建一个针对特定用户的实例。一旦您使得您的服务器
+侦听所有的子域名请求，那么您就可以使用一个非常简单的 WSGI 对象
+来进行动态的应用程序构造。
 
-The perfect level for abstraction in that regard is the WSGI layer.  You
-write your own WSGI application that looks at the request that comes and
-delegates it to your Flask application.  If that application does not
-exist yet, it is dynamically created and remembered::
+实现此功能最佳的抽象层就是 WSGI 层。您可以编写您自己的 WSGI 程序来
+检查访问请求，然后分发给您的 Flask 应用。如果您的应用尚未存在，那么
+就创建一个并且保存下来::
 
     from threading import Lock
 
@@ -119,7 +109,7 @@ exist yet, it is dynamically created and remembered::
             return app(environ, start_response)
 
 
-This dispatcher can then be used like this::
+调度器可以这样使用::
 
     from myapplication import create_app, get_user_for_subdomain
     from werkzeug.exceptions import NotFound
@@ -140,12 +130,11 @@ This dispatcher can then be used like this::
     application = SubdomainDispatcher('example.com', make_app)
 
 
-Dispatch by Path
+使用路径来调度
 ----------------
 
-Dispatching by a path on the URL is very similar.  Instead of looking at
-the `Host` header to figure out the subdomain one simply looks at the
-request path up to the first slash::
+通过 URL 路径分发请求跟前面的方法很相似。只需要简单检查请求路径当中到第一个
+斜杠之前的部分，而不是检查用来确定子域名的 `HOST` 头信息就可以了::
 
     from threading import Lock
     from werkzeug.wsgi import pop_path_info, peek_path_info
@@ -175,8 +164,8 @@ request path up to the first slash::
                 app = self.default_app
             return app(environ, start_response)
 
-The big difference between this and the subdomain one is that this one
-falls back to another application if the creator function returns `None`::
+这种做法和子域名分发的方法的区别是，这里如果创建应用对象的函数返回了 `None`,
+那么请求就被降级回推到另一个应用当中::
 
     from myapplication import create_app, default_app, get_user_for_prefix
 
