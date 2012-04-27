@@ -402,7 +402,7 @@ API
 .. autoclass:: flask.blueprints.BlueprintSetupState
    :members:
 
-Signals
+信号
 -------
 
 .. when modifying this list, also update the one in signals.rst
