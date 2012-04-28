@@ -12,7 +12,7 @@ Flask 中的设计决策
 -------------------------------
 
 一个基于 WSGI 的 Python web 应用必须有一个中央的可调用对象来实现实际的应
-用。在 Flask 中，这是一个 :class:`~flask.Flask 类的实例。每个 Flask 应用
+用。在 Flask 中，这是一个 :class:`~flask.Flask` 类的实例。每个 Flask 应用
 必须创建一个该类的实例，并传给它模块的名称，但是为什么 Flask 不自己这么
 做？
 
@@ -107,7 +107,7 @@ Flask 使用 Jinja2 全面的自动转义支持。同样，也提供了从 Jinja
 -----------------------
 
 为什么 Flask 把自己叫做微框架，并且它依赖于两个库（也就是 Werkzeug 和
- Jinja 2）。为什么不能？如果我们仔细审查 Ruby 的 web 开发，有一个非常
+Jinja 2）。为什么不能？如果我们仔细审查 Ruby 的 web 开发，有一个非常
 类似 WSGI 的协议。被称作 Rack 的就是它，但是除此之外，它看起来非常像
 一个 WSGI 的 Ruby 实现。但是几乎所有的 Ruby 应用不直接使用 Rack ，而是
 基于一个相同名字的库。这个 Rack 库与 Python 中的两个库不相伯仲： WebOb
