@@ -40,6 +40,9 @@ Logger
 Message Flashing
   消息闪现
 
+Object Literal
+  对象字面量
+
 Processor
   处理器
  
@@ -57,3 +60,6 @@ Set / Setting
 
 Signal
   信号
+  
+Token
+  令牌
