@@ -102,11 +102,6 @@ HTML 对 XHTML
 HTML5 严格地定义了处理规则，并准确地指定了一个浏览器应该如何应对处理中的错
 误——不像 XHTML，只简单声明将要放弃处理。一些人因显然无效的语法仍生成期望中
 结果而困惑（比如，缺失结尾标签或属性值未用引号包裹）。
-HTML5 has strictly defined parsing rules, but it also specifies exactly
-how a browser should react to parsing errors - unlike XHTML, which simply
-states parsing should abort. Some people are confused by apparently
-invalid syntax that still generates the expected results (for example,
-missing end tags or unquoted attribute values).
 
 这些工作是因为大多数浏览器遭遇一个标记错误时的错误处理是宽容的，其它的实际
 上也指定了。下面的结构在 HTML5 标准中是可选的，但一定被浏览器支持:
