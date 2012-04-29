@@ -3,12 +3,6 @@
 部署和分发
 =========================
 
-`distribute`_, formerly setuptools, is an extension library that is
-commonly used to (like the name says) distribute Python libraries and
-extensions.  It extends distutils, a basic module installation system
-shipped with Python to also support various more complex constructs that
-make larger applications easier to distribute:
-
 `distribute`_ 的前身是 ``setuptools`` ，是一个通常用于分发
 Python 库和扩展程序的外部库。它依赖于随 Python 预装的 ``distutils`` 库，
 而后者则是一个基础的模块安装系统，这一安装系统也支持很多复杂的构造，使得
@@ -26,13 +20,13 @@ Python 库和扩展程序的外部库。它依赖于随 Python 预装的 ``distu
   的库。您也可以使用 `pip` 这个可能早晚会代替 `easy_install` 的包管理器，它能够
   完成安装软件包之外更多的任务。
 
-而 Flask 自己，则所有您可以在 cheessshop 上找到的软件包，都随着 distribute 
+而对于 Flask 自己，则所有您可以在 cheessshop 上找到的软件包，都随着 distribute 
 分发管理器，或者更古老的 setuptools 和 distutils 分发。
 
-在这里，我们家丁您的应用名为 `yourapplication.py` ，而您没使用模块而是
-:ref:`package <larger-application>` 。分发带有标准模块的代码不被 `distribute`_
-支持，所以我们不去管它。如果您还没有将您的应用转化为包，请参考前文
-:ref:`larger-applications` 的内容查找如何做到这件事。
+在这里，我们假定您的应用名为 `yourapplication.py` ，而您没使用模块而是使用
+:ref:`package <larger-application>` 的结构来组织代码。分发带有标准模块的
+代码不被 `distribute`_ 支持，所以我们不去管它。如果您还没有将您的应用转化为包的形式，
+请参考前文 :ref:`larger-applications` 的内容查找如何做到这件事。
 
 利用 distribute 完成一个有效的部署进行更复杂和更自动化的部署方案的第一步，
 如果您使程序完全自动化，可以阅读 :ref:`fabric-deployment1` 这一章。
