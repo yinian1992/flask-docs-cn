@@ -1,22 +1,19 @@
-Using URL Processors
+使用 URL 处理器
 ====================
 
 .. versionadded:: 0.7
 
-Flask 0.7 introduces the concept of URL processors.  The idea is that you
-might have a bunch of resources with common parts in the URL that you
-don't always explicitly want to provide.  For instance you might have a
-bunch of URLs that have the language code in it but you don't want to have
-to handle it in every single function yourself.
+Flask 0.7 版引入了 URL 处理器的概念。引入此概念的意义在于，对于一部分资源
+，他们 URL 共同的部分您并不是很清楚该如何设定。例如您可能有一些 URL 包含了
+几个字母用来指定的多国语言语种，但是您不想在每个函数里都手动设别到底是哪个语言。
 
-URL processors are especially helpful when combined with blueprints.  We
-will handle both application specific URL processors here as well as
-blueprint specifics.
+当与蓝图配合使用时，URL 处理器尤其有用，我们将可以同时处理应用和蓝图指定的
+处理器。
 
-Internationalized Application URLs
+多国语言化的应用程序 URL
 ----------------------------------
 
-Consider an application like this::
+试想如下一个网页应用::
 
     from flask import Flask, g
 
@@ -32,17 +29,15 @@ Consider an application like this::
         g.lang_code = lang_code
         ...
 
-This is an awful lot of repetition as you have to handle the language code
-setting on the :data:`~flask.g` object yourself in every single function.
-Sure, a decorator could be used to simplify this, but if you want to
-generate URLs from one function to another you would have to still provide
-the language code explicitly which can be annoying.
+这可以一大片重复的代码，因为您必须在每个函数当中手动处理 :data:`~flask.g` 中
+定义的多国语言字串。当然，一个装饰器可以被用来简化它，但是如果您想要从一个函数
+动态生成 URL 到另一个函数，您必须仍然要详细地提供这段多国语言代号码，这将会非常
+恼人。
 
-For the latter, this is where :func:`~flask.Flask.url_defaults` functions
-come in.  They can automatically inject values into a call for
-:func:`~flask.url_for` automatically.  The code below checks if the
-language code is not yet in the dictionary of URL values and if the
-endpoint wants a value named ``'lang_code'``::
+对于后者，这就是让 :func:`~flask.Flask.url_defaults` 函数大展神威的地方了！
+这些函数可以自动的将值注入到一个 :func:`~flask.url_for` 的调用中去。下面的
+代码检查多语言代号码是否在包含各个 URL 值的字典里，以及末端调用的函数是否接受
+一个名为 ``'lang_code'`` 的值::
 
     @app.url_defaults
     def add_language_code(endpoint, values):
@@ -51,26 +46,21 @@ endpoint wants a value named ``'lang_code'``::
         if app.url_map.is_endpoint_expecting(endpoint, 'lang_code'):
             values['lang_code'] = g.lang_code
 
-The method :meth:`~werkzeug.routing.Map.is_endpoint_expecting` of the URL
-map can be used to figure out if it would make sense to provide a language
-code for the given endpoint.
+URL 映射的函数 :meth:`~werkzeug.routing.Map.is_endpoint_expecting` 可以被用来
+识别是否可以给末端的函数提供一个多国语言代号码。
 
-The reverse of that function are
-:meth:`~flask.Flask.url_value_preprocessor`\s.  They are executed right
-after the request was matched and can execute code based on the URL
-values.  The idea is that they pull information out of the values
-dictionary and put it somewhere else::
+相反的函数是 :meth:`~flask.url_value_preprocessor`\s 。他们在请求成功
+匹配并且能够执行针对 URL 值的代码时立即执行。实际上，他们将信息从包含这些值的
+字典当中取出，然后将其放在某个其他的地方::
 
     @app.url_value_preprocessor
     def pull_lang_code(endpoint, values):
         g.lang_code = values.pop('lang_code', None)
 
-That way you no longer have to do the `lang_code` assigment to
-:data:`~flask.g` in every function.  You can further improve that by
-writing your own decorator that prefixes URLs with the language code, but
-the more beautiful solution is using a blueprint.  Once the
-``'lang_code'`` is popped from the values dictionary and it will no longer
-be forwarded to the view function reducing the code to this::
+这样，您再也不必在每个函数中都要将 `lang_code` 分配给 :data:`~flask.g` 了。
+您可以进一步的改进它，通过编写您自己的装饰器，并使用这些装饰器为包含多国语言
+代号码的 URL 添加前缀。但是使用蓝图相比起来会更优雅一些。一旦 ``'lang_code'``
+被从字典里弹出，他就不会在被传递到视图函数当中。这样，代码就可简化为如下形式::
 
     from flask import Flask, g
 
@@ -95,15 +85,13 @@ be forwarded to the view function reducing the code to this::
     def about():
         ...
 
-Internationalized Blueprint URLs
+多国语言化的蓝图 URL
 --------------------------------
 
-Because blueprints can automatically prefix all URLs with a common string
-it's easy to automatically do that for every function.  Furthermore
-blueprints can have per-blueprint URL processors which removes a whole lot
-of logic from the :meth:`~flask.Flask.url_defaults` function because it no
-longer has to check if the URL is really interested in a ``'lang_code'``
-parameter::
+因为蓝图能够自动的为所有 URL 添加一个普通字符串作为前缀，那么为任何
+函数自动执行类似任务也就十分简单了。不仅如此，蓝图还可以预处理 URL 处理器
+从而从 :meth:`~flask.Flask.url_defaults` 当中移除一整套业务逻辑，这些业务逻辑
+与 ``'lang_code'`` 参数无关，而我们这是只关系这个参数。
 
     from flask import Blueprint, g
 
