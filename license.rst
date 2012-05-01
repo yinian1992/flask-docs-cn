@@ -1,36 +1,31 @@
-License
+许可证
 =======
 
-Flask is licensed under a three clause BSD License.  It basically means:
-do whatever you want with it as long as the copyright in Flask sticks
-around, the conditions are not modified and the disclaimer is present.
-Furthermore you must not use the names of the authors to promote derivatives
-of the software without written consent.
+Flask 由一个三条款的 BSD 许可证许可。基本上可以认为：你可以用它做任何事情，
+只要版权在 Flask 的支持范围内，条款不能被修改，并且提供免责声明。
+此外，你不可以在没有书面同意的情况下使用作者的名字来推广衍生作品。
 
-The full license text can be found below (:ref:`flask-license`).  For the
-documentation and artwork different licenses apply.
+完整的许可证可以在下面找到（ :ref:`flask-license` ）。对于文档和艺术作品，
+使用不同的许可证。
 
 .. _authors:
 
-Authors
+作者
 -------
 
 .. include:: AUTHORS
 
-General License Definitions
+通用许可证定义
 ---------------------------
 
-The following section contains the full license texts for Flask and the
-documentation.
+下面的章节包含完整的 Flask 及其文档的许可证文本。
 
--   "AUTHORS" hereby refers to all the authors listed in the
-    :ref:`authors` section.
+-   在此 :ref:`authors` 节中列出的所有作者引用自 "AUTHORS" 。
 
--   The ":ref:`flask-license`" applies to all the sourcecode shipped as
-    part of Flask (Flask itself as well as the examples and the unittests)
-    as well as documentation.
+-   ":ref:`flask-license`" 适用于所有作为 Flask 一部分的源代码（ Flask 本
+    身，同样也包含实例和单元测试），以及文档。
 
--   The ":ref:`artwork-license`" applies to the project's Horn-Logo.
+-   ":ref:`artwork-license`" 适用于 Flask 的长角标志（Horn-Logo）。
 
 .. _flask-license:
 
