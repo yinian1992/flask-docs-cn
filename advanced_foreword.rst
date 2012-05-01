@@ -48,13 +48,6 @@ Python 社区目前处于改善库对 Python 编程语言中迭代支持的进�
 进中的处境仍有一些问题，使得我们难以迁移到 Python 3 。这些问题原因一部分是
 语言中的变更长时间没有复查，一部分也是因为我们没有找出低层 API 应该如何更改
 来适应 Python 3 中 Unicode 的差异。
-Currently the Python community is in the process of improving libraries to
-support the new iteration of the Python programming language.  While the
-situation is greatly improving there are still some issues that make it
-hard for us to switch over to Python 3 just now.  These problems are
-partially caused by changes in the language that went unreviewed for too
-long, partially also because we have not quite worked out how the lower-
-level API should change to account for the Unicode differences in Python 3.
 
 一旦应对变更的解决方案出现，Werkzeug 和 Flask 就会立刻迁移到 Python 3 ，
 并且我们会提供升级现有应用到 Python 3 的有用提示。在那之前，我们强烈建议
