@@ -1,25 +1,22 @@
 CGI
 ===
 
-If all other deployment methods do not work, CGI will work for sure.
-CGI is supported by all major servers but usually has a sub-optimal
-performance.
+如果所有其它的部署方式都不能奏效，那么 CGI 毫无疑问会奏效。 CGI 被
+所有主流服务器支持，但通常性能欠佳。
 
-This is also the way you can use a Flask application on Google's `App
-Engine`_, where execution happens in a CGI-like environment.
+这也是你在 Google 的 `App Engine`_ 上使用 Flask 应用的方式，其执行方式
+恰好是一个 CGI-like 的环境。
 
-.. admonition:: Watch Out
+.. admonition:: 注意
 
-   Please make sure in advance that any ``app.run()`` calls you might
-   have in your application file are inside an ``if __name__ ==
-   '__main__':`` block or moved to a separate file.  Just make sure it's
-   not called because this will always start a local WSGI server which
-   we do not want if we deploy that application to CGI / app engine.
+   请提前确保你在应用文件中的任何 ``app.run()`` 调用在 ``if __name__ ==
+   '__main__':`` 块中或是移到一个独立的文件。这是因为它总会启动一个本地
+   的 WSGI 服务器，并且我们在部署应用到 uWSGI 时不需要它。
 
-Creating a `.cgi` file
+创建一个 `.cgi` 文件
 ----------------------
 
-First you need to create the CGI application file.  Let's call it
+首先你需要创建一个 CGI 应用程序文件。我们把它叫做
 `yourapplication.cgi`::
 
     #!/usr/bin/python
@@ -28,19 +25,18 @@ First you need to create the CGI application file.  Let's call it
 
     CGIHandler().run(app)
 
-Server Setup
+服务器配置    
 ------------
 
-Usually there are two ways to configure the server.  Either just copy the
-`.cgi` into a `cgi-bin` (and use `mod_rewrite` or something similar to
-rewrite the URL) or let the server point to the file directly.
+通常有两种方式来配置服务器。直接把 `.cgi` 复制到 `cgi-bin` （并且使用
+`mod_rewrite` 或其它类似的东西来重写 URL ） 或让服务器直接指向这个文件。
 
-In Apache for example you can put a like like this into the config:
+例如，在 Apache 中你可以在配置中写入这样的语句:
 
 .. sourcecode:: apache
 
     ScriptAlias /app /path/to/the/application.cgi
 
-For more information consult the documentation of your webserver.
+更多信息请查阅你的 web 服务器的文档。    
 
 .. _App Engine: http://code.google.com/appengine/
