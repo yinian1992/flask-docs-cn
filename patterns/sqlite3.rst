@@ -61,7 +61,7 @@ decorators in combination with the special :class:`~flask.g` object.
 
 .. _easy-querying:
 
-方便查询
+简化查询
 -------------
 
 现在在每个请求处理函数里，您都可以访问 `g.db` 来获得当前打开的数据库连接。
@@ -88,16 +88,16 @@ decorators in combination with the special :class:`~flask.g` object.
     else:
         print the_username, 'has the id', user['user_id']
 
-将变量传入 SQL 语句时，使用一个问号在语句之前。然后将参数以链表的形式穿进去。
+将变量传入 SQL 语句时，使用在语句之前使用一个问号，然后将参数以链表的形式穿进去。
 永远不要直接将他们添加到 SQL 语句中以字符串形式传入，这样做将会允许恶意用户
 以 `SQL 注入 <http://en.wikipedia.org/wiki/SQL_injection>`_ 的方式攻击您的应用。
 
 初始化数据库模型
 -----------------
 
-关系数据库需要一个模型来定义储存数据的模式，所以应用程序通常携带一个 `schema.sql`
-文件用于创建数据库。提供一个特定的函数来根据这个文件指定的模型创建数据库是一个不错的
-主义，以下的函数就能为您做到这件事::
+关系数据库需要一个模型来定义储存数据的模式，所以应用程序通常携带一个
+`schema.sql` 文件用于创建数据库。提供一个特定的函数来创建数据库是个
+不错的主意，以下的函数就能为您做到这件事::
 
     from contextlib import closing
     
