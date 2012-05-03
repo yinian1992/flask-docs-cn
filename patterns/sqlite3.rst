@@ -33,10 +33,8 @@ decorators in combination with the special :class:`~flask.g` object.
 
 .. note::
 
-   Please keep in mind that the teardown request functions are always
-   executed, even if a before-request handler failed or was never
-   executed.  Because of this we have to make sure here that the database
-   is there before we close it.
+   请记住，teardown request 在请求结束时总会运行，即使 before-request 处理器
+   运行失败或者从未运行过。我们需要确保数据库连接在关闭的时候在那里。
 
 按需连接
 -----------------
@@ -63,7 +61,7 @@ decorators in combination with the special :class:`~flask.g` object.
 
 .. _easy-querying:
 
-简易查询
+方便查询
 -------------
 
 现在在每个请求处理函数里，您都可以访问 `g.db` 来获得当前打开的数据库连接。
@@ -95,7 +93,7 @@ decorators in combination with the special :class:`~flask.g` object.
 以 `SQL 注入 <http://en.wikipedia.org/wiki/SQL_injection>`_ 的方式攻击您的应用。
 
 初始化数据库模型
----------------
+-----------------
 
 关系数据库需要一个模型来定义储存数据的模式，所以应用程序通常携带一个 `schema.sql`
 文件用于创建数据库。提供一个特定的函数来根据这个文件指定的模型创建数据库是一个不错的
