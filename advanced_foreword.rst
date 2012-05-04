@@ -53,4 +53,4 @@ Python 社区目前处于改善库对 Python 编程语言中迭代支持的进�
 并且我们会提供升级现有应用到 Python 3 的有用提示。在那之前，我们强烈建议
 在开发时使用 Python 2.6 和 2.7 ，并且激活 Python 3 警告。如果你计划在近期
 升级到 Python 3 ，我们强烈推荐你阅读
-`如何编写向后兼容的 Python 代码 <http://lucumr.pocoo.org/2011/1/22/forwards-compatible-python/>`_。
+`如何编写向后兼容的 Python 代码 <http://lucumr.pocoo.org/2011/1/22/forwards-compatible-python/>`_ 。
