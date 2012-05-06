@@ -1,20 +1,17 @@
 .. _message-flashing-pattern:
 
-Message Flashing
+信息闪回
 ================
 
-Good applications and user interfaces are all about feedback.  If the user
-does not get enough feedback they will probably end up hating the
-application.  Flask provides a really simple way to give feedback to a
-user with the flashing system.  The flashing system basically makes it
-possible to record a message at the end of a request and access it next
-request and only next request.  This is usually combined with a layout
-template that does this.
+好的应用和用户界面的重点是回馈。如果用户没有得到足够的反馈，他们可能最终
+会对您的应用产生不好的评价。Flask 提供了一个非常简单的方法来使用闪过系统
+向用户反馈信息。闪过系统使得在一个请求结束的时候记录一个信息，然后在且仅仅在
+下一个请求中访问这个数据。这通常配合一个布局模板实现。
 
-Simple Flashing
+简单的闪回
 ---------------
 
-So here is a full example::
+这里是一个完成的例子::
 
     from flask import Flask, flash, redirect, render_template, \
          request, url_for
@@ -42,7 +39,7 @@ So here is a full example::
         app.run()
 
 
-And here the ``layout.html`` template which does the magic:
+这里的 ``layout.html`` 模板完成了所有的魔术:
 
 .. sourcecode:: html+jinja
 
@@ -59,7 +56,7 @@ And here the ``layout.html`` template which does the magic:
    {% endwith %}
    {% block body %}{% endblock %}
 
-And here the index.html template:
+这里是 `index.html` 模板:
 
 .. sourcecode:: html+jinja
 
@@ -69,7 +66,7 @@ And here the index.html template:
      <p>Do you want to <a href="{{ url_for('login') }}">log in?</a>
    {% endblock %}
 
-And of course the login template:
+这里是登陆模板:
 
 .. sourcecode:: html+jinja
 
@@ -91,24 +88,20 @@ And of course the login template:
      </form>
    {% endblock %}
 
-Flashing With Categories
+分类闪回
 ------------------------
 
 .. versionadded:: 0.3
 
-It is also possible to provide categories when flashing a message.  The
-default category if nothing is provided is ``'message'``.  Alternative
-categories can be used to give the user better feedback.  For example
-error messages could be displayed with a red background.
+当闪回一个消息时，是可以提供一个分类的。未指定分类时默认的分类为 ``'message'`` 。
+可以使用分类来提供给用户更好的反馈，例如，错误信息应该被显示为红色北京。
 
-To flash a message with a different category, just use the second argument
-to the :func:`~flask.flash` function::
+要使用一个自定义的分类，只要使用 :func:`~flask.flash` 函数的第二个参数::
 
     flash(u'Invalid password provided', 'error')
 
-Inside the template you then have to tell the
-:func:`~flask.get_flashed_messages` function to also return the
-categories.  The loop looks slightly different in that situation then:
+在模板中，您接下来可以调用 :func:`~flask.get_flashed_messages` 函数来返回
+这个分类，在下面的情景中，循环看起来将会有一点点不一样:
 
 .. sourcecode:: html+jinja
 
@@ -122,18 +115,16 @@ categories.  The loop looks slightly different in that situation then:
      {% endif %}
    {% endwith %}
 
-This is just one example of how to render these flashed messages.  One
-might also use the category to add a prefix such as
-``<strong>Error:</strong>`` to the message.
+这仅仅是一个渲染闪回信息的例子，您可也可以使用分类来加入一个诸如
+``<strong>Error:</strong>`` 的前缀给信息。
 
-Filtering Flash Messages
+过滤闪回消息
 ------------------------
 
 .. versionadded:: 0.9
 
-Optionally you can pass a list of categories which filters the results of
-:func:`~flask.get_flashed_messages`.  This is useful if you wish to
-render each category in a separate block.
+可选地，您可以将一个分类的列表传入到 :func:`~flask.get_flashed_messages` 中，
+以过滤函数返回的结果。如果您希望将每个分类渲染到独立的块中，这会非常有用。
 
 .. sourcecode:: html+jinja
 
