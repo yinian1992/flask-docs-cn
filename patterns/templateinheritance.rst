@@ -1,22 +1,19 @@
 .. _template-inheritance:
 
-Template Inheritance
+模板继承
 ====================
 
-The most powerful part of Jinja is template inheritance. Template inheritance
-allows you to build a base "skeleton" template that contains all the common
-elements of your site and defines **blocks** that child templates can override.
+Jinja 最为强大的地方在于他的模板继承功能，模板继承允许你创建一个基础的骨架模板，
+这个模板包含您网站的通用元素，并且定义子模板可以重载的 **blocks** 。
 
-Sounds complicated but is very basic. It's easiest to understand it by starting
-with an example.
+听起来虽然复杂，但是其实非常基础。理解这个概念的最好方法就是开始一个例子。
 
 
-Base Template
+基础模板
 -------------
 
-This template, which we'll call ``layout.html``, defines a simple HTML skeleton
-document that you might use for a simple two-column page. It's the job of
-"child" templates to fill the empty blocks with content:
+在被叫做 ``layout.html`` 的这个模板中，定义了一个简单的 HTML 文档骨架，您可以
+将这个骨架用作一个简单的双栏页面。而子模板负责将空白的块填充上内容:
 
 .. sourcecode:: html+jinja
 
@@ -37,14 +34,13 @@ document that you might use for a simple two-column page. It's the job of
       </div>
     </body>
 
-In this example, the ``{% block %}`` tags define four blocks that child templates
-can fill in. All the `block` tag does is tell the template engine that a
-child template may override those portions of the template.
+在这个例子中，使用 ``{% block %}`` 标签定义了四个子模板可以重载的块。 `block` 
+标签所做的的所有事情就是告诉模板引擎: 一个子模板可能会重写父模板的这个部分。
 
-Child Template
+子模板
 --------------
 
-A child template might look like this:
+子模板看起来像这个样子:
 
 .. sourcecode:: html+jinja
 
@@ -67,3 +63,7 @@ this template "extends" another template.  When the template system evaluates
 this template, first it locates the parent.  The extends tag must be the
 first tag in the template.  To render the contents of a block defined in
 the parent template, use ``{{ super() }}``.
+
+``{% extends %}`` 标签是这里的关键，它通知模板引擎这个模板继承了另外的模板，当
+模板系统解析模板时，他首先找到父模板。 ``extends`` 标签必须是模板中的第一个标签。
+为了在一个中块显示父模板中定义的对应块的内容，使用 ``{{ super() }}`` 。
