@@ -66,13 +66,6 @@ JSON 本身是一个很清量级的数据传输格式，非常近似于 Python �
 
 .. admonition:: 可能有用的信息
 
-   In HTML the `script` tag is declared `CDATA` which means that entities
-   will not be parsed.  Everything until ``</script>`` is handled as script.
-   This also means that there must never be any ``</`` between the script
-   tags.  ``|tojson`` is kind enough to do the right thing here and
-   escape slashes for you (``{{ "</script>"|tojson|safe }}`` is rendered as
-   ``"<\/script>"``).
-
    在 HTML 中， `script` 标签被声明为 `CDATA` 。这意味着 HTML 转义实体将不会
    被解析。在 ``</script>`` 出现之前的所有内容都被当做脚本处理。这也意味着在
    script 标签的内容之中不应该出现 ``</`` 字样。``|tojson`` 足以在这里完成
