@@ -3,11 +3,6 @@
 在 Flask 中使用 SQLite 3
 =========================
 
-In Flask you can implement the opening of database connections at the
-beginning of the request and closing at the end with the
-:meth:`~flask.Flask.before_request` and :meth:`~flask.Flask.teardown_request`
-decorators in combination with the special :class:`~flask.g` object.
-
 在 Flask 中，在请求开始的时候用 :meth:`~flask.Flask.before_request` 装饰器实现
 打开数据库连接的代码，然后在请求结束的时候用 :meth:`~flask.Flask.before_request`
 装饰器关闭数据库连接。在这个过程中需要配合 :class:`~flask.g` 对象。
