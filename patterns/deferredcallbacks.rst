@@ -36,13 +36,12 @@ after-request 回调中。然而有些时候这种迁移并不是一个非常容
         return f
 
 
-Calling the Deferred
+调用延迟函数
 --------------------
 
-Now you can use the `after_this_request` decorator to mark a function to
-be called at the end of the request.  But we still need to call them.  For
-this the following function needs to be registered as
-:meth:`~flask.Flask.after_request` callback::
+现在您可以使用 `after_this_request` 装饰器来将一个函数标记为在请求结束之后
+执行，但是我们仍然需要手动调用他们。为此，如下函数将被注册为 
+:meth:`~flask.Flask.after_request` 回调::
 
     @app.after_request
     def call_after_request_callbacks(response):
@@ -51,12 +50,11 @@ this the following function needs to be registered as
         return response
 
 
-A Practical Example
+一个实际应用的例子
 -------------------
 
-Now we can easily at any point in time register a function to be called at
-the end of this particular request.  For example you can remember the
-current language of the user in a cookie in the before-request function::
+现在我们可以在任何时间点将一个函数注册为在某个特定请求结束后执行，例如您可以
+在 before-request 中将用户当前语言的信息保存在 Cookie 中::
 
     from flask import request
 
