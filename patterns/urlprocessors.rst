@@ -49,7 +49,7 @@ Flask 0.7 版引入了 URL 处理器的概念。引入此概念的意义在于�
 URL 映射的函数 :meth:`~werkzeug.routing.Map.is_endpoint_expecting` 可以被用来
 识别是否可以给末端的函数提供一个多国语言代号码。
 
-相反的函数是 :meth:`~flask.url_value_preprocessor`\s 。他们在请求成功
+相反的函数是 :meth:`~flask.url_value_preprocessor` 。他们在请求成功
 匹配并且能够执行针对 URL 值的代码时立即执行。实际上，他们将信息从包含这些值的
 字典当中取出，然后将其放在某个其他的地方::
 
@@ -89,9 +89,9 @@ URL 映射的函数 :meth:`~werkzeug.routing.Map.is_endpoint_expecting` 可以�
 --------------------------------
 
 因为蓝图能够自动的为所有 URL 添加一个普通字符串作为前缀，那么为任何
-函数自动执行类似任务也就十分简单了。不仅如此，蓝图还可以预处理 URL 处理器
-从而从 :meth:`~flask.Flask.url_defaults` 当中移除一整套业务逻辑，这些业务逻辑
-与 ``'lang_code'`` 参数无关，而我们这是只关系这个参数。
+函数自动执行类似任务也就十分简单了。每个蓝图都可以有一个 URL 处理器，即从
+:meth:`~flask.Flask.url_defaults` 函数中移除一整套业务逻辑，因为它不再检查
+URL 是否真正与 ``'lang_code'`` 相关::
 
     from flask import Blueprint, g
 
