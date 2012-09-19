@@ -24,12 +24,12 @@ Python 库和扩展程序的外部库。它依赖于随 Python 预装的 ``distu
 分发管理器，或者更古老的 setuptools 和 distutils 分发。
 
 在这里，我们假定您的应用名为 `yourapplication.py` ，而您没使用模块而是使用
-:ref:`package <larger-application>` 的结构来组织代码。分发带有标准模块的
+:ref:`package <larger-applications>` 的结构来组织代码。分发带有标准模块的
 代码不被 `distribute`_ 支持，所以我们不去管它。如果您还没有将您的应用转化为包的形式，
 请参考前文 :ref:`larger-applications` 的内容查找如何做到这件事。
 
 利用 distribute 完成一个有效的部署进行更复杂和更自动化的部署方案的第一步，
-如果您使程序完全自动化，可以阅读 :ref:`fabric-deployment1` 这一章。
+如果您使程序完全自动化，可以阅读 :ref:`fabric-deployment` 这一章。
 
 基础的安装脚本
 ------------------
@@ -76,7 +76,7 @@ Python 库和扩展程序的外部库。它依赖于随 Python 预装的 ``distu
 `include_package_data` 和 `zip_safe` 可能不在此列。
 `include_package_data` 告诉 distribute 自动查找一个 `MANIFEST.in` 文件。
 解析此文件获得有效的包类型的数据，并安装所有这些包。我们使用这个特性来分发
-Python 模块自带的静态文件和模板(参考 :ref:`distribute-resources`)。而 `zip_safe` 
+Python 模块自带的静态文件和模板(参考 :ref:`distributing-resources`)。而 `zip_safe` 
 标志可以被用来强制阻止 ZIP 安装包的建立。通常情况下，您不希望您的包以 ZIP 压缩
 包的形式被安装，因为一些工具不支持这种方式，而且这样也会让调试代码异常麻烦。
 
