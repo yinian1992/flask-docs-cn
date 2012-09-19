@@ -1,25 +1,21 @@
-Lazily Loading Views
+延迟加载视图
 ====================
 
-Flask is usually used with the decorators.  Decorators are simple and you
-have the URL right next to the function that is called for that specific
-URL.  However there is a downside to this approach: it means all your code
-that uses decorators has to be imported upfront or Flask will never
-actually find your function.
+Flask 通常配合装饰器使用，装饰器使用非常简单，而且使您可以将 URL 和处理它的函数
+放在一起。然而这种方法也有一种不足: 这就意味着您使用装饰器的代码必须在前面导入，
+否则 Flask 将无法找到您的函数。
 
-This can be a problem if your application has to import quick.  It might
-have to do that on systems like Google's App Engine or other systems.  So
-if you suddenly notice that your application outgrows this approach you
-can fall back to a centralized URL mapping.
+这对于需要很快导入的应用程序来说是一个问题，这种情况可能出现在类似谷歌的
+App Engine 这样的系统上。所以如果您突然发现您的引用超出了这种方法可以处理
+的能力，您可以降级到中央 URL 映射的方法。
 
-The system that enables having a central URL map is the
-:meth:`~flask.Flask.add_url_rule` function.  Instead of using decorators,
-you have a file that sets up the application with all URLs.
+用于激活中央 URL 映射的函数是 :meth:`~flask.Flask.add_url_rule` 方法。
+您需要提供一个设置应用程序所有 URL 的文件，而不是使用装饰器。
 
-Converting to Centralized URL Map
+转换到中央 URL 映射
 ---------------------------------
 
-Imagine the current application looks somewhat like this::
+假象现在的应用的样子如下所示::
 
     from flask import Flask
     app = Flask(__name__)
@@ -32,8 +28,8 @@ Imagine the current application looks somewhat like this::
     def user(username):
         pass
 
-Then the centralized approach you would have one file with the views
-(`views.py`) but without any decorator::
+而中央 URL 映射的方法下，您需要一个不包含任何装饰器的文件(`views.py`)，
+如下所示::
 
     def index():
         pass
@@ -41,8 +37,7 @@ Then the centralized approach you would have one file with the views
     def user(username):
         pass
 
-And then a file that sets up an application which maps the functions to
-URLs::
+然后使用一个文件初始化应用并将函数映射到 URLs::
 
     from flask import Flask
     from yourapplication import views
@@ -50,13 +45,12 @@ URLs::
     app.add_url_rule('/', view_func=views.index)
     app.add_url_rule('/user/<username>', view_func=views.user)
 
-Loading Late
+延迟加载
 ------------
 
-So far we only split up the views and the routing, but the module is still
-loaded upfront.  The trick to actually load the view function as needed.
-This can be accomplished with a helper class that behaves just like a
-function but internally imports the real function on first use::
+目前我们仅仅将视图和路径配置分开了，但是模块仍然是在前面导入的。下面的技巧
+使得视图函数可以按需加载。可以使用一个辅助类来实现，这个辅助类以函数的方式
+作用，但是当第一次使用某个函数时，它才在内部导入这个函数::
 
     from werkzeug import import_string, cached_property
 
@@ -73,11 +67,11 @@ function but internally imports the real function on first use::
         def __call__(self, *args, **kwargs):
             return self.view(*args, **kwargs)
 
-What's important here is is that `__module__` and `__name__` are properly
-set.  This is used by Flask internally to figure out how to name the
-URL rules in case you don't provide a name for the rule yourself.
+在使用这种方法时，将 `__module__` 和 `__name__` 变量设定为合适的值是很重要的。
+在你没有手动指定一个 URL 规则时，这两个变量被 Flask 用于在内部确定如何命名
+URL 规则。
 
-Then you can define your central place to combine the views like this::
+现在您就可以定义您将视图整合到的位置，如下所示::
 
     from flask import Flask
     from yourapplication.helpers import LazyView
@@ -87,10 +81,9 @@ Then you can define your central place to combine the views like this::
     app.add_url_rule('/user/<username>',
                      view_func=LazyView('yourapplication.views.user'))
 
-You can further optimize this in terms of amount of keystrokes needed to
-write this by having a function that calls into
-:meth:`~flask.Flask.add_url_rule` by prefixing a string with the project
-name and a dot, and by wrapping `view_func` in a `LazyView` as needed::
+您可以进一步改进它，以便于节省键盘敲击次数。通过编写一个在内部调用
+:meth:`~flask.Flask.add_url_rule` 方法的函数，自动将一个包含项目名称
+以及点符号的字符串添加为前缀，并按需将 `view_func` 封装进 `LazyView` ::
 
     def url(url_rule, import_name, **options):
         view = LazyView('yourapplication.' + import_name)
@@ -99,6 +92,6 @@ name and a dot, and by wrapping `view_func` in a `LazyView` as needed::
     url('/', 'views.index')
     url('/user/<username>', 'views.user')
 
-One thing to keep in mind is that before and after request handlers have
-to be in a file that is imported upfront to work properly on the first
-request.  The same goes for any kind of remaining decorator.
+需要记住的是，请求前后激发的回调处理器必须在一个文件里，并在前面导入，
+使之在第一个请求到来之间能够合适地工作。对于其他所有的装饰器来说也是
+一样的。
