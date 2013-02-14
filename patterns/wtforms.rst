@@ -11,9 +11,9 @@
 
 .. admonition:: 挖掘 WTForms 的最大潜力
 
-   `Flask-WTF` 扩展在这个模式的基础上扩展并添加了一些随手即得的精巧
+   `Flask-WTF`_ 扩展在这个模式的基础上扩展并添加了一些随手即得的精巧
    的帮助函数，这些函数将会使在 Flask 里使用表单更加有趣，您可以通过
-   `PyPI <http://pypi.python.org/pypi/Flask-WTF>` 获取它。
+   `PyPI <http://pypi.python.org/pypi/Flask-WTF>`_ 获取它。
 
 .. _Flask-WTF: http://packages.python.org/Flask-WTF/
 
@@ -70,7 +70,7 @@
 棒的是，我们可以编写一个宏来渲染表单的字段，让这个字段包含一个标签，如果
 存在验证错误，则列出列表来。
 
-以下是一个使用这种宏的 `_formhelpers.html` 模板的例子。
+以下是一个使用这种宏的 `_formhelpers.html` 模板的例子:
 
 .. sourcecode:: html+jinja
 
@@ -110,10 +110,7 @@
       <p><input type=submit value=Register>
     </form>
 
-For more information about WTForms, head over to the `WTForms
-website`_.
-
-关于 WTForms 的更多信息，请访问 `WTForms website`_ 。
+关于 WTForms 的更多信息，请访问 `WTForms 网站`_ 。
 
 .. _WTForms: http://wtforms.simplecodes.com/
-.. _WTForms website: http://wtforms.simplecodes.com/
+.. _WTForms 网站: http://wtforms.simplecodes.com/
