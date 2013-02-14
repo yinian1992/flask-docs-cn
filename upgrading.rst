@@ -19,6 +19,24 @@ installation, make sure to pass it the ``-U`` parameter::
 
     $ easy_install -U Flask
 
+Version 0.10
+------------
+
+The biggest change going from 0.9 to 0.10 is that the cookie serialization
+format changed from pickle to a specialized JSON format.  This change has
+been done in order to avoid the damage an attacker can do if the secret
+key is leaked.  When you upgrade you will notice two major changes: all
+sessions that were issued before the upgrade are invalidated and you can
+only store a limited amount of types in the session.  The new sessions are
+by design much more restricted to only allow JSON with a few small
+extensions for tuples and strings with HTML markup.
+
+In order to not break people's sessions it is possible to continue using
+the old session system by using the `Flask-OldSessions_` extension.
+
+.. _Flask-OldSessions: http://packages.python.org/Flask-OldSessions/
+
+
 Version 0.9
 -----------
 
