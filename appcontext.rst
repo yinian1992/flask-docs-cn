@@ -58,7 +58,7 @@ Flask 背后的设计理念之一就是，代码执行有两种不同的“状�
         # within this block, current_app points to app.
         print current_app.name
 
-在配置了 ``SERVER_NAME`` 时3，应用上下文也被用于 func:`~flask.url_for` 函
+在配置了 ``SERVER_NAME`` 时3，应用上下文也被用于 :func:`~flask.url_for` 函
 数。这允许你在没有请求时生成 URL 。
 
 应用上下文局部变量
