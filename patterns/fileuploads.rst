@@ -144,11 +144,6 @@ Flask 会抛出一个 :exc:`~werkzeug.exceptions.RequestEntityTooLarge` 异常�
 简单来说，客户端会每5秒钟询问服务器传输的进度。您感觉到这种讽刺了么？客户端
 询问一些他本应该已经知道的事情。
 
-Now there are better solutions to that work faster and more reliable.  The
-web changed a lot lately and you can use HTML5, Java, Silverlight or Flash
-to get a nicer uploading experience on the client side.  Look at the
-following libraries for some nice examples how to do that:
-
 现在有了一些性能更好、运行更可靠的解决方案。WEB 已经有了不少变化，现在您可以
 使用 HTML5、Java、Silverlight 或者 Flash 来实现客户端更好的上传体验。看一看
 下面列出的库的连接，可以找到一些很好的样例。
