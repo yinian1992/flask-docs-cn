@@ -1,4 +1,4 @@
-用 JQuery 实现 Ajax 
+用 jQuery 实现 Ajax 
 ====================
 
 `jQuery`_ 是一个小型的 JavaScript 库，它通常被用来简化 DOM 和 JavaScript 
