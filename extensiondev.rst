@@ -252,7 +252,7 @@ flask_sqlite3.py
 使用 _app_ctx_stack
 --------------------
 
-在上面的例子中，在每个请求之前，一个 ``sqlite3_db` 被分配到
+在上面的例子中，在每个请求之前，一个 ``sqlite3_db`` 被分配到
 ``_app_ctx_stack.top`` 。在一个视图函数中，这个变量可以使用 ``SQLite3``
 的属性 ``connection`` 来访问。在请求销毁时， ``sqlite3_db`` 连接被关闭。
 通过使用这个模式， *相同* 的 sqlite3 数据库连接在请求期间对任何东西都是
