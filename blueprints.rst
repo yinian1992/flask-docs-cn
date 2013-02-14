@@ -81,8 +81,8 @@ Flask 中的蓝图不是即插应用，因为它实际上并不是一个应用�
      <Rule '/<page>' (HEAD, OPTIONS, GET) -> simple_page.show>,
      <Rule '/' (HEAD, OPTIONS, GET) -> simple_page.show>]
 
-第一个显然是来自应用自身，用于静态文件。其它的两个用于`simple_page`` 蓝
-图中的 `show` 函数。如你所见，它们的前缀是蓝图的名称，并且用一个点
+第一个显然是来自应用自身，用于静态文件。其它的两个用于 ``simple_page``
+蓝图中的 `show` 函数。如你所见，它们的前缀是蓝图的名称，并且用一个点
 （ ``.`` ）来分割。
 
 不过，蓝图也可以在不同的位置挂载::

@@ -45,12 +45,8 @@
     from yourapplication import app
     app.run(debug=True)
 
-What did we gain from this?  Now we can restructure the application a bit
-into multiple modules.  The only thing you have to remember is the
-following quick checklist:
-
 然后，我们又能对应用做什么呢？现在我们可以重新构造我们的应用，将其
-改造为多个模块。你需要记住的唯一一件东西就是如下的快速备忘列表。
+改造为多个模块。你需要记住的唯一一件东西就是如下的快速备忘列表:
 
 1. `Flask` 程序对象的创建必须在 `__init__.py` 文件里完成，
    这样我们就可以安全的导入每个模块，而 `__name__` 变量将
