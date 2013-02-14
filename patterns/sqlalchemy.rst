@@ -18,7 +18,7 @@ Flask-SQLAlchemy 扩展
 一点点设置才可以使用，因此存在一个 Flask 扩展帮助您操作它。如果您想要快速
 开始使用，那么我们建议您使用这种方法。
 
-您可以从 from `PyPI <http://pypi.python.org/pypi/Flask-SQLAlchemy>`_ 
+您可以从 `PyPI <http://pypi.python.org/pypi/Flask-SQLAlchemy>`_ 
 下载到 `Flask-SQLAlchemy`_ 
 
 .. _Flask-SQLAlchemy: http://packages.python.org/Flask-SQLAlchemy/
@@ -202,4 +202,4 @@ u'admin'
 >>> engine.execute('select * from users where id = :1', [1]).first()
 (1, u'admin', u'admin@localhost')
 
-更多 SQLAlchemy 相关信息，请参考 `website <http://sqlalchemy.org/>`_.
+更多 SQLAlchemy 相关信息，请参考 `其网站 <http://sqlalchemy.org/>`_.
