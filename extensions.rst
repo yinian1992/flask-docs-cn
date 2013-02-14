@@ -18,7 +18,7 @@ Flask 扩展用多种不同的方式扩充 Flask 的功能。比如加入数据�
 
 扩展通常附带有文档，来展示如何使用它。扩展的行为没有一个可以预测的一般性
 规则，但是它们是从同一个位置导入的。如果你有一个名为 ``Flask-Foo`` 或是
-``Foo-Flask` 的扩展，你可以从 ``flask.ext.foo`` 导入它::
+``Foo-Flask`` 的扩展，你可以从 ``flask.ext.foo`` 导入它::
 
     from flask.ext import foo
 
