@@ -8,9 +8,9 @@ Flask 与更大的东西合并，但是可以和 WSGI 应用交叉。这甚至�
 Django 和 Flask 的应用运行在同一个解释器下。这么做的用处依赖于
 这个应用内部是如何运行的。
 
-与模块 :ref:`module approach <larger-applications>` 的区别在于，在此时
-您运行的不同 Flask 应用是相互之间完全独立的，他们运行在不同的配置，而且
-在不同的 WSGI 层次被调度。
+与 :ref:`模块方式 <larger-applications>` 的区别在于，此时您运行的不
+同 Flask 应用是相互之间完全独立的，他们运行在不同的配置，而且在 WSGI
+层调度。
 
 
 如何使用此文档
@@ -25,7 +25,7 @@ Django 和 Flask 的应用运行在同一个解释器下。这么做的用处依
     run_simple('localhost', 5000, application, use_reloader=True)
 
 注意，:func:`run_simple <werkzeug.serving.run_simple>` 函数不是为生产
-用途设计的，发布应用时可以使用 :ref:`full-blown WSGI server <deployment>` 。
+用途设计的，发布应用时可以使用 :ref:`成熟的 WSGI 服务器 <deployment>` 。
 
 为了能使用交互式调试器，调试必须在应用和简易开发服务器两边都被激活。
 下面是一个带有调试功能的 “Hello World” 的例子::
