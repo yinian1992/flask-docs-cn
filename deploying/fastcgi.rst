@@ -109,7 +109,7 @@ Python <http://redmine.lighttpd.net/wiki/lighttpd/Docs:ModFastCGI>`_
 -------------------------
 
 既然 Nginx 和其它服务器并不加载 FastCGI 应用，你需要手动这么做。
-`Supervisor can manage FastCGI processes.
+`Supervisor 可以管理 FastCGI 进程。
 <http://supervisord.org/configuration.html#fcgi-program-x-section-settings>`_
 你可以寻找其它 FastCGI 进程管理器或写一个启动时运行 `.fcgi` 文件的脚本，
 例如使用一个 SysV ``init.d`` 脚本。对于临时的解决方案，你总是可以在 GNU
