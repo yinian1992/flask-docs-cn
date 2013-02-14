@@ -178,7 +178,6 @@ Flask 使用 Python 内置的日志系统，而且它确实向你发送你可能
 	回一个字符串。默认的通常足够好，你不需要重载它。
 
 更多信息请见其官方文档。
-For more information, head over to the official documentation.
 
 
 其它的库
@@ -214,7 +213,7 @@ SQLAlchemy 在它的核心中大量地使用日志。而在 :mod:`logging` 包�
 在配置你的应用到生产时遇到了问题？如果你拥有主机的 shell 权限，验证你是否可以
 在部署环境中手动用 shell 运行你的应用。确保在同一用户账户下运行配置好的部署
 来解决权限问题。你可以设置 `debug=True` 来使用 Flask 内置的开发服务器，这在
-捕获配置问题的时候非常有效，但是 ** 请确保在可控环境下临时地这么做。 ** 不要
+捕获配置问题的时候非常有效，但是 **请确保在可控环境下临时地这么做。** 不要
 在生产环境中使用 `debug=True` 运行。
 
 .. _working-with-debuggers:
