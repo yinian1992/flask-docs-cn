@@ -181,7 +181,7 @@ SQL 抽象层
 我们就可以使用“事务”了:
 
 >>> con = engine.connect()
->>> con.execute(users.insert(name='admin', email='admin@localhost'))
+>>> con.execute(users.insert(), name='admin', email='admin@localhost')
 
 SQLAlchemy 将会为我们自动提交对数据库的修改。
 
