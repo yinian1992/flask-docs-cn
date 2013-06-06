@@ -2,7 +2,7 @@
 ===============
 
 Python 拥有一件非常有趣的特性，那就是函数装饰器。这个特性允许您使用一些
-非常简介的语法编辑 Web 应用。因为 Flask 中的每个视图都是一个函数装饰器，
+非常简洁的语法编辑 Web 应用。因为 Flask 中的每个视图都是一个函数装饰器，
 这些装饰器被用来将附加的功能注入到一个或者多个函数中。 :meth:`~flask.Flask.route` 
 装饰器您可能已经使用过了。但是在一些情况下您需要实现自己的装饰器。例如，
 您有一个仅供登陆后的用户访问的视图，如果未登录的用户试图访问，则把用户
@@ -17,7 +17,7 @@ Python 拥有一件非常有趣的特性，那就是函数装饰器。这个特�
 有一个专门用于处理这些的以装饰器形式调用的函数(:func:`functools.wraps` )。
 
 这个例子家丁登陆页面的名字是 ``'login'`` 并且当前用户被保存在 `g.user` 当中，
-如果么有用户登陆， `g.user` 会是 `None`::
+如果没有用户登陆， `g.user` 会是 `None`::
 
     from functools import wraps
     from flask import g, request, redirect, url_for
@@ -30,8 +30,8 @@ Python 拥有一件非常有趣的特性，那就是函数装饰器。这个特�
             return f(*args, **kwargs)
         return decorated_function
 
-所以您怎么使用这些装饰器呢？将它加为视图函数外最里层的装饰器。当添加更多
-装饰器的话，一定要记住 :meth:`~flask.Flask.route` 考试最外面的::
+所以您怎么使用这些装饰器呢？将它加为视图函数外最里层的装饰器。添加装饰
+器时，一定要记住把 :meth:`~flask.Flask.route` 放在最外面::
 
     @app.route('/secret_page')
     @login_required
