@@ -219,7 +219,7 @@ Flask 提供了几个信号，其它的扩展可能会提供更多。另外，�
    这个信号在请求处理中抛出异常时发送。它在标准异常处理生效 *之前* ，甚至是
    在没有异常处理的情况下发送。异常本身会通过 `exception` 传递到订阅函数。
 
-   Example subscriber::
+   订阅示例::
 
         def log_exception(sender, exception, **extra):
             sender.logger.debug('Got exception during processing: %s', exception)
