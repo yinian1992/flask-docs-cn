@@ -659,7 +659,7 @@ URL 路由注册
 
 -   `required_methods`: 如果这个属性被设置了， 当注册一个 URL 规则的时候，
     Flask 将总是会添加这些 methods 即使 methods 参数在 ``route()`` 调用
-    的时候被显示的覆盖了。
+    的时候被显式的覆盖了。
 
 完整的例子::
 
