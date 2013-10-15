@@ -63,3 +63,6 @@ Signal
   
 Token
   令牌
+
+Worker
+  职程
