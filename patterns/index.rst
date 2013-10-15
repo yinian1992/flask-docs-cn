@@ -37,3 +37,4 @@ Snippet Archives <http://flask.pocoo.org/snippets/>`_.
    deferredcallbacks
    methodoverrides
    requestchecksum
+   celery
