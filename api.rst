@@ -248,7 +248,7 @@ API
 
    从 Flask 0.10 起，对象 g 存储在应用上下文中而不再是请求上下文中，这
    意味着即使在应用上下文中它也是可访问的而不是只能在请求上下文中。在
-   结合:ref:`faking-resources`模式使用来测试时这尤为有用。
+   结合 :ref:`faking-resources` 模式使用来测试时这尤为有用。
 
    另外，在 0.10 中你可以使用 :meth:`get` 方法来获取一个属性或者如果这
    个属性没设置的话将得到 `None` (或者第二个参数)。
@@ -342,8 +342,8 @@ For usage examples, read the :mod:`json` documentation.
 
 这个 :func:`~htmlsafe_dumps` 方法也能在 Jinja2 的过滤器中使用，名字为
 ``|tojson`` 。请注意在 `script` 标签内部的内容将不会被转义，所以如果你想在
- `script` 内部使用的话请确保它是不可用的通过 ``|safe`` 来转义，除非你正在
- 使用 Flask 0.10，如下：
+`script` 内部使用的话请确保它是不可用的通过 ``|safe`` 来转义，除非你正在
+使用 Flask 0.10，如下：
 
 .. sourcecode:: html+jinja
 
