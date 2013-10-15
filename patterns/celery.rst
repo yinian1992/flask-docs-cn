@@ -4,7 +4,7 @@
 Celery 是一个 Python 的任务队列，包含线程/进程池。曾经有一个 Flask 的集成，
 但在 Celery 3 重构了内部细节后变得不必要了。本指导补充了如何妥善在 Flask
 中使用 Celery 的空白，但假设你已经读过了 Celery 官方文档中的教程
- `使用 Celery 的首要步骤
+`使用 Celery 的首要步骤
 <http://docs.celeryproject.org/en/master/getting-started/first-steps-with-celery.html>`_
 
 安装 Celery
