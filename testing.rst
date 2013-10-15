@@ -243,6 +243,53 @@ Flask 提供了一种方法用于测试您的应用，那就是将 Werkzeug 测�
 测试客户端。
 
 
+.. _faking-resources:
+
+伪造资源和上下文
+----------------------------
+
+.. versionadded:: 0.10
+
+在应用上下文或 :attr:`flask.g` 对象上存储用户认证信息和数据库连接
+非常常见。一般的模式是在第一次使用对象时，把对象放在应用上下文或
+:attr:`flask.g` 上面，而在请求销毁时移除对象。试想一下例如下面的获
+取当前用户的代码::
+
+    def get_user():
+        user = getattr(g, 'user', None)
+        if user is None:
+            user = fetch_current_user_from_database()
+            g.user = user
+        return user
+
+对于测试，这样易于从外部覆盖这个用户，而不用修改代码。连接
+:data:`flask.appcontext_pushed` 信号可以很容易地完成这个任务::
+
+    from contextlib import contextmanager
+    from flask import appcontext_pushed
+
+    @contextmanager
+    def user_set(app, user):
+        def handler(sender, **kwargs):
+            g.user = user
+        with appcontext_pushed.connected_to(handler, app):
+            yield
+
+并且之后使用它::
+
+    from flask import json, jsonify
+
+    @app.route('/users/me')
+    def users_me():
+        return jsonify(username=g.user.username)
+
+    with user_set(app, my_user):
+        with app.test_client() as c:
+            resp = c.get('/users/me')
+            data = json.loads(resp.data)
+            self.assert_equal(data['username'], my_user.username)
+
+
 保存上下文
 --------------------------
 
