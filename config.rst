@@ -5,20 +5,21 @@
 
 .. versionadded:: 0.3
 
-应用会需要某种配置。你可能会需要根据应用环境更改不同的设置，比如开关调试模
+应用会需要某种配置。你可能会需要根据应用环境更改不同的设置，比如切换调试模
 式、设置密钥、或是别的设定环境的东西。
 
 Flask 被设计为需要配置来启动应用。你可以在代码中硬编码配置，这对于小的应用
 并不坏，但是有更好的方法。
 
-跟你如何载入配置无关，会有一个可用的配置对象来载入配置值:
+跟你如何载入配置无关，会有一个可用的配置对象保存着载入的配置值:
 :class:`~flask.Flask` 对象的 :attr:`~flask.Flask.config` 属性。这是 Flask 
-自己放置特定配置值的地方，也是扩展可以存储配置值的地方。但是，你可以把配置
+自己放置特定配置值的地方，也是扩展可以存储配置值的地方。但是，你也可以把
+自己的配置保存到这个对象里。
 
-基本配置
+配置基础
 --------------------
 
-:attr:`~flask.Flask.config` 实际上继承于字典，并且可以像修改其它字典一样修
+:attr:`~flask.Flask.config` 实际上继承于字典，并且可以像修改字典一样修
 改它::
 
     app = Flask(__name__)
@@ -48,7 +49,7 @@ Flask 被设计为需要配置来启动应用。你可以在代码中硬编码�
 ``TESTING``                       启用/禁用 测试模式
 ``PROPAGATE_EXCEPTIONS``          显式地允许或禁用异常的传播。如果没有设置
                                   或显式地设置为 `None` ，当 ``TESTING`` 或
-                                  ``DEBUG`` 为真时，隐式为真
+                                  ``DEBUG`` 为真时，这个值隐式地为 true.
 ``PRESERVE_CONTEXT_ON_EXCEPTION`` 默认情况下，如果应用工作在调试模式，请求
                                   上下文不会在异常时出栈来允许调试器内省。
                                   这可以通过这个键来禁用。你同样可以用这个
@@ -68,6 +69,12 @@ Flask 被设计为需要配置来启动应用。你可以在代码中硬编码�
 ``PERMANENT_SESSION_LIFETIME``    以 :class:`datetime.timedelta` 对象控制
                                   长期会话的生存时间。从 Flask 0.8 开始，也
                                   可以用整数来表示秒。
+``SESSION_REFRESH_EACH_REQUEST``  这个标志控制永久会话如何刷新。如果被设置为
+                                  `True` （这是默认值），每一个请求 cookie
+                                  都会被刷新。如果设置为 `False` ，只有当
+                                  cookie 被修改后才会发送一个 `set-cookie` 
+                                  的标头。非永久会话不会受到这个配置项的影响
+                                  。
 ``USE_X_SENDFILE``                启用/禁用 x-sendfile
 ``LOGGER_NAME``                   日志记录器的名称
 ``SERVER_NAME``                   服务器名和端口。需要这个选项来支持子域名
@@ -83,15 +90,16 @@ Flask 被设计为需要配置来启动应用。你可以在代码中硬编码�
 ``MAX_CONTENT_LENGTH``            如果设置为字节数， Flask 会拒绝内容长度大于
                                   此值的请求进入，并返回一个 413 状态码
 ``SEND_FILE_MAX_AGE_DEFAULT``:    默认缓存控制的最大期限，以秒计，在
-                                  :meth:`flask.Flask.send_static_file` 中使用。
-                                  对于单个文件，覆盖这个值，使用
-                                  :meth:`flask.Flask.get_send_file_options` 和
-                                  :meth:`flask.Blueprint.get_send_file_options`
-                                  钩子。默认为 43200（12小时）。
+                                  :meth:`flask.Flask.send_static_file` (默认的
+                                  静态文件处理器)中使用。对于单个文件分别在
+                                  :class:`~flask.Flask` 或
+                                  :class:`~flask.Blueprint` 上使用
+                                  :meth:`~flask.Flask.get_send_file_max_age`
+                                  来覆盖这个值。默认为 43200（12小时）。
 ``TRAP_HTTP_EXCEPTIONS``          如果这个值被设置为 ``True`` ，Flask不会执行
                                   HTTP 异常的错误处理，而是像对待其它异常一样，
-                                  通过异常栈让它冒泡。这对于需要找出 HTTP 异常
-                                  源头的可怕调试情形是有用的。
+                                  通过异常栈让它冒泡地抛出。这对于需要找出
+                                  HTTP 异常源头的可怕调试情形是有用的。
 ``TRAP_BAD_REQUEST_ERRORS``       Werkzeug 处理请求中的特定数据的内部数据结构会
                                   抛出同样也是“错误的请求”异常的特殊的 key 
                                   errors 。同样地，为了保持一致，许多操作可以
@@ -99,14 +107,30 @@ Flask 被设计为需要配置来启动应用。你可以在代码中硬编码�
                                   希望准确地找出异常的原因，这个设置用于在这些
                                   情形下调试。如果这个值被设置为 ``True`` ，你
                                   只会得到常规的回溯。
-``PREFERRED_URL_SCHEME``          URL 模式用于 URL 生成。如果没有设置 URL 模式，
-                                  默认将为 ``http``
+``PREFERRED_URL_SCHEME``          生成URL的时候如果没有可用的 URL 模式话将使
+                                  用这个值。默认为 ``http``
+``JSON_AS_ASCII``                 默认情况下 Flask 使用 ascii 编码来序列化对
+                                  象。如果这个值被设置为 False ， Flask不会
+                                  将其编码为 ASCII，并且按原样输出，返回它的
+                                  unicode 字符串。比如 ``jsonfiy`` 会自动地采用
+                                  ``utf-8`` 来编码它然后才进行传输。
+``JSON_SORT_KEYS``                默认情况下 Flask 按照 JSON 对象的键的顺序来序
+                                  来序列化它。这样做是为了确保键的顺序不会受到
+                                  字典的哈希种子的影响，从而返回的值每次都是
+                                  一致的，不会造成无用的额外 HTTP 缓存。你可
+                                  以通过修改这个配置的值来覆盖默认的操作。但
+                                  这是不被推荐的做法因为这个默认的行为可能会给
+                                  你在性能的代价上带来改善。
+``JSONIFY_PRETTYPRINT_REGULAR``   如果这个配置项被  ``True`` （默认值），
+                                  如果不是 XMLHttpRequest 请求的话（由
+                                  ``X-Requested-With``  标头控制）
+                                  json 字符串的返回值会被漂亮地打印出来。
 ================================= =========================================
 
 .. admonition:: 关于 ``SERVER_NAME`` 的更多
 
    ``SERVER_NAME`` 用于子域名支持。因为 Flask 在得知现有服务器名之前不能
-   猜测出子域名部分，所以如果你想使用子域名，这个选项必要的，并且也用于会
+   猜测出子域名部分，所以如果你想使用子域名，这个选项是必要的，并且也用于会
    话 cookie 。
 
    请注意，不只是 Flask 有不知道子域名是什么的问题，你的 web 浏览器也会这
@@ -137,6 +161,12 @@ Flask 被设计为需要配置来启动应用。你可以在代码中硬编码�
 
 .. versionadded:: 0.9
    ``PREFERRED_URL_SCHEME``
+
+.. versionadded:: 0.10
+   ``JSON_AS_ASCII``, ``JSON_SORT_KEYS``, ``JSONIFY_PRETTYPRINT_REGULAR``
+
+.. versionadded:: 1.0
+   ``SESSION_REFRESH_EACH_REQUEST``
 
 从文件配置
 ----------------------
@@ -194,9 +224,9 @@ Flask 被设计为需要配置来启动应用。你可以在代码中硬编码�
 开发 / 生产
 ------------------------
 
-大多数应用至少需要一份配置。你应该至少在开发中使用的生产服务器上分割配置文
-件。处理这个的最简单方法是，使用一份默认的总会被载入的配置，和一部分版本控
-制，和独立的配置来像上面提到的例子中必要的那样覆盖值::
+大多数应用不止需要一份配置。生产服务器和开发期间使用的服务器应该各有一份单独
+的配置。处理这个的最简单方法是，使用一份默认的总会被载入的配置，和一部分版本
+控制，以及独立的配置来像上面提到的例子中必要的那样覆盖值::
 
     app = Flask(__name__)
     app.config.from_object('yourapplication.default_settings')
@@ -236,12 +266,12 @@ Flask 被设计为需要配置来启动应用。你可以在代码中硬编码�
 
 -   在版本控制中保留一个默认的配置。向配置中迁移这份默认配置，或者在覆盖
     配置值前，在你自己的配置文件中导入它。
--   使用环境变量来在配置间切换。这样可以从 Python 解释器之外完成，使开发
+-   使用环境变量来在配置间切换。这样可以在 Python 解释器之外完成，使开发
     和部署更容易，因为你可以在不触及代码的情况下快速简便地切换配置。如果你
     经常在不同的项目中作业，你甚至可以创建激活一个 virtualenv 并导出开发
     配置的脚本。
 -   使用 `fabric`_ 之类的工具在生产环境中独立地向生产服务器推送代码和配置。
-    参阅 :ref:`fabric-deployment` 模式。
+    参阅 :ref:`fabric-deployment` 模式来获得更详细的信息。
 
 .. _fabric: http://fabfile.org/
 
@@ -254,8 +284,9 @@ Flask 被设计为需要配置来启动应用。你可以在代码中硬编码�
 .. versionadded:: 0.8
 
 Flask 0.8 引入了示例文件夹。 Flask 在很长时间使得直接引用相对应用文件夹
-的路径成为可能。这也是许多开发者加载存储在载入应用旁边的配置的方法。不幸
-的是，这只会在应用不是包，即根路径指向包内容的情况下才能工作。
+的路径成为可能(通过 :attr:`Flask.root_path` )。这也是许多开发者加载存储
+在载入应用旁边的配置的方法。不幸的是，这只会在应用不是包，即根路径指向包
+内容的情况下才能工作。
 
 在 Flask 0.8 中，引入了 :attr:`Flask.instance_path` 并提出了“实例文件夹”
 的新概念。实例文件夹被为不使用版本控制和特定的部署而设计。这是放置运行时
@@ -268,14 +299,14 @@ Flask 0.8 引入了示例文件夹。 Flask 在很长时间使得直接引用相
 
 请注意给出的 *一定* 是绝对路径。
 
-如果 `instance_path` 参数没有赋值，会适用下面默认的位置:
+如果 `instance_path` 参数没有赋值，会使用下面默认的位置:
 
--   已卸载的模块::
+-   未安装的模块::
 
         /myapp.py
         /instance
 
--   已卸载的包::
+-   未安装的包::
 
         /myapp
             /__init__.py
@@ -286,7 +317,7 @@ Flask 0.8 引入了示例文件夹。 Flask 在很长时间使得直接引用相
         $PREFIX/lib/python2.X/site-packages/myapp
         $PREFIX/var/myapp-instance
 
-    ``$PREFIX`` 是你 Python 安装的前缀。这个前缀可以是 ``/usr`` 或者你
+    ``$PREFIX`` 是你 Python 安装的前缀。这个前缀可以是 ``/usr`` 或者你的
     virtualenv 的路径。你可以打印 ``sys.prefix`` 的值来查看前缀被设置成
     了什么。
 
