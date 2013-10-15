@@ -50,6 +50,7 @@ API 参考
    unicode
    extensiondev
    styleguide
+   python3
    upgrading
    changelog
    license

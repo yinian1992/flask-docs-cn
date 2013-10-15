@@ -19,6 +19,8 @@ installation, make sure to pass it the ``-U`` parameter::
 
     $ easy_install -U Flask
 
+.. _upgrading-to-010:
+
 Version 0.10
 ------------
 
