@@ -1,9 +1,0 @@
-Flask 中文文档
-
-文档对应的 Flask 版本为：0.9-dev
-请使用 pip install Flask==dev 的方式安装
-
-文档为从 https://github.com/mitsuhiko/flask.git 克隆的版本
-所以会与 http://flask.pocoo.org/docs/ 上的版本有所出入
-
-术语表是由译者附上的
