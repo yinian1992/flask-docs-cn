@@ -160,13 +160,15 @@ Flask 使用 Python 内置的日志系统，而且它确实向你发送你可能
 +------------------+----------------------------------------------------+
 | ``%(asctime)s``  | `LogRecord` 创建时的人类可读的时间。默认情况下，格 |
 |                  | 式为 ``"2003-07-08 16:49:45,896"`` （逗号后的数字  |
-|                  | 时间的毫秒部分）。这可以通过继承 formatter 类，并  |
+|                  | 时间的毫秒部分）。这可以通过继承                   |
+|                  | :class:~logging.Formatter，并                      |
 |                  | 重载 :meth:`~logging.Formatter.formatTime` 改变。  |
 +------------------+----------------------------------------------------+
 | ``%(message)s``  | 记录的消息，视为 ``msg % args``                    |
 +------------------+----------------------------------------------------+
 
-如果你想深度定制日志格式，你可以继承 formatter 类。formatter 类有三个需要
+如果你想深度定制日志格式，你可以继承 :class:~logging.Formatter。 
+:class:~logging.Formatter 有三个需要
 关注的方法:
 
 :meth:`~logging.Formatter.format`:
@@ -230,7 +232,7 @@ SQLAlchemy 在它的核心中大量地使用日志。而在 :mod:`logging` 包�
 * ``use_debugger`` - 是否使用内部的 Flask 调试器
 * ``use_reloader`` - 是否在异常时重新载入并创建子进程
 
-`debug` 必须为 True （例如，异常必须被捕获）来允许其它的两个选项设置为任何值。
+`debug` 必须为 True （即异常必须被捕获）来允许其它的两个选项设置为任何值。
 
 如果你使用 Aptana/Eclipse 来调试，你会需要把 ``use_debugger`` 和 ``user_reloader``
 都设置为 False 。
