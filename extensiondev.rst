@@ -20,7 +20,7 @@ Flask，一个微框架，通常需要一些重复的步骤来让第三方库工
 
 实际的扩展名（人类可读的名称）无论如何会是“Flask-SimpleXML”之类的东西。
 确保在名字中包含“Flask”并注意大小写。这是用户可以在他们的 `setup.py` 文
-件中注册你扩展依赖的方式。
+件中注册你的扩展为依赖的方式。
 
 Flask 设立了一个叫做 :data:`flask.ext` 的重定向包，用户应该从这个包导入
 扩展。例如，如果你有一个叫做 `flask_something` 的包，用户应该用
@@ -28,16 +28,16 @@ Flask 设立了一个叫做 :data:`flask.ext` 的重定向包，用户应该从�
 详情见 :ref:`ext-import-transition` 。
 
 但是扩展如何看起来像扩展？一个扩展必须保证它可以同时在多个 Flask 应用中工
-作。这是必要条件，因为许多人回使用类似 :ref:`app-factories` 的模式来创建
+作。这是必要条件，因为许多人会使用类似 :ref:`app-factories` 的模式来创建
 应用来进行单元测试或是支持多套配置。因此，你的应用支持这种行为非常重要。
 
-最重要的是，扩展必须与一个 `setup.py` 一起装配，并且在 PyPI 上注册。同样，
-开发 checkout 链接也应该能工作，这样才可以在 virtualenv 中容易地安装开发版
-本，而不是手动下载库。
+最重要的是，扩展必须与一个 `setup.py` 文件一起装配，并且在 PyPI 上注册。同
+样，开发 checkout 链接也应该能工作，这样才可以在 virtualenv 中容易地安装开
+发版本，而不是手动下载库。
 
-Flask 扩展必须以 BSD 或 MIT 或更自由的许可证来许可，才能被征募到 Flask
+Flask 扩展必须以 BSD 或 MIT 或更自由的许可证来许可，这样才能被列入到 Flask
 Extension Registry 。记住 Flask Extension Registry 是一个人工维护的地方，
-并且如果库表现为必需的，将会提前审查。
+并且会视这些库的行为来决定是否进行必要的提前审查。
 
 "Hello Flaskext!"
 -----------------
@@ -141,6 +141,7 @@ flask_sqlite3.py
 下面是用来复制/粘贴的 `flask_sqlite3.py` 的内容::
 
     import sqlite3
+    from flask import current_app
 
     # Find the stack on which we want to store the database connection.
     # Starting with Flask 0.9, the _app_ctx_stack is the correct one,
@@ -154,11 +155,9 @@ flask_sqlite3.py
     class SQLite3(object):
 
         def __init__(self, app=None):
+            self.app = app
             if app is not None:
-                self.app = app
-                self.init_app(self.app)
-            else:
-                self.app = None
+                self.init_app(app)
 
         def init_app(self, app):
             app.config.setdefault('SQLITE3_DATABASE', ':memory:')
@@ -170,7 +169,7 @@ flask_sqlite3.py
                 app.teardown_request(self.teardown)
 
         def connect(self):
-            return sqlite3.connect(self.app.config['SQLITE3_DATABASE'])
+            return sqlite3.connect(current_app.config['SQLITE3_DATABASE'])
 
         def teardown(self, exception):
             ctx = stack.top
@@ -191,17 +190,17 @@ flask_sqlite3.py
 1.  ``__init__`` 方法接受一个可选的应用对象，并且如果提供，会调用 ``init_app`` 。
 2.  ``init_app`` 方法使得 ``SQLite3`` 对象不需要应用对象就可以实例化。这个方法
     支持工厂模式来创建应用。 ``init_app`` 会为数据库设定配置，如果不提供配置，默
-    认是一个内存中的数据库。此外， ``init_app`` 方法附加到 ``teardown`` 处理器。
+    认是一个内存中的数据库。此外， ``init_app`` 方法附加了 ``teardown`` 处理器。
     它会试图使用新样式的应用上下文处理器，并且如果它不存在，退回到请求上下文处理
     器。
 3.  接下来，我们定义了 ``connect`` 方法来打开一个数据库连接。
 4.  最后，我们添加一个 ``connection`` 属性，首次访问时打开数据库连接，并把它存储
     在上下文。这也是处理资源的推荐方式：在资源第一次使用时惰性获取资源。
 
-    注意这里，我们把数据库链接通过 ``_app_ctx_stack.top`` 附加到应用上下文
+    注意这里，我们把数据库连接通过 ``_app_ctx_stack.top`` 附加到应用上下文
     的栈顶。扩展应该使用上下文的栈顶来存储它们自己的信息，并使用足够复杂的
-    名称。注意我们退化到 ``_request_ctx_stack.top`` ，当应用使用不支持它的
-    老版本的 Flask 。
+    名称。注意如果应用使用不支持它的老版本的 Flask 我们退回到
+    ``_request_ctx_stack.top`` 。
 
 那么为什么我们决定在此使用基于类的方法？因为使用我们的扩展的情况看起来
 会是这样::
@@ -213,14 +212,14 @@ flask_sqlite3.py
     app.config.from_pyfile('the-config.cfg')
     db = SQLite3(app)
 
-你之后可以再视图中这样使用数据库::
+你之后可以在视图中这样使用数据库::
 
     @app.route('/')
     def show_all():
         cur = db.connection.cursor()
         cur.execute(...)
 
-同样地，如果你在请求之外，而你在使用支持应用上下文 Flask 0.9 或之后版本，
+同样地，如果你在请求之外，而你在使用支持应用上下文 Flask 0.9 或之后的版本，
 你可以用同样的方法使用数据库::
 
     with app.app_context():
@@ -236,7 +235,7 @@ flask_sqlite3.py
     app = create_app('the-config.cfg')
     db.init_app(app)
 
-记住支持创建应用的工厂模式需要已审核的 Flask 扩展（下面会解释）。
+记住已审核的 Flask 扩展需要支持用工厂模式来创建应用（下面会解释）。
 
 .. admonition:: ``init_app`` 的注意事项
 
@@ -244,7 +243,7 @@ flask_sqlite3.py
    类的 Flask 扩展必须只在应用传递到构造函数时在对象上存储应用。这告诉扩
    展：我对使用多个应用没有兴趣。
 
-   当扩展需要找出当前的应用且它没有一个指向其的引用，必须使用
+   当扩展需要找出当前的应用且它没有一个指向其的引用时，必须使用
    :data:`~flask.current_app` 上下文局域变量或用一种你可以显式传递应用的
    方法更改 API 。
 
@@ -255,8 +254,8 @@ flask_sqlite3.py
 在上面的例子中，在每个请求之前，一个 ``sqlite3_db`` 被分配到
 ``_app_ctx_stack.top`` 。在一个视图函数中，这个变量可以使用 ``SQLite3``
 的属性 ``connection`` 来访问。在请求销毁时， ``sqlite3_db`` 连接被关闭。
-通过使用这个模式， *相同* 的 sqlite3 数据库连接在请求期间对任何东西都是
-可访问的。
+通过使用这个模式， *相同* 的 sqlite3 数据库连接在请求期间对任何需要它的东
+西都是可访问的。
 
 如果 :data:`~flask._app_ctx_stack` 因为用户使用了老版本的 Flask 不存在，
 建议退化到限定在请求中的 :data:`~flask._request_ctx_stack` 。
@@ -283,13 +282,13 @@ flask_sqlite3.py
 严格地讲，上面的代码是错误的，因为销毁函数接受异常且典型地不返回任何东西。
 尽管如此，因为返回值被丢弃，这刚好会工作，假设中间的代码不触碰传递的参数。
 
-他山之玉，可以攻石
+他山之石，可以攻玉
 -------------------
 
 本文档只接触了扩展开发中绝对的最小部分，如果你想要了解更多，一个非常好的
 主意是查看 `Flask Extension Registry`_ 上已有的扩展。如果你感到失落，也有
 `邮件列表`_  和 `IRC 频道`_ 来获取一些漂亮 API 的想法。特别是当你在做之前
-没人做过的东西，这回事一个非常好的主意来获得更多投入。这不仅获得人们会想
+没人做过的东西，这会是一个非常好的主意来获得更多投入。这不仅获得人们会想
 从扩展中得到什么的想法，也可避免多个开发者重复发明轮子。
 
 记住：良好的 API 设计是困难的，所以请在邮件列表里介绍你的项目，让
@@ -315,20 +314,20 @@ Flask 也有已审核的扩展的概念。已审核的扩展被作为 Flask 自�
 2.  它必须伴随一个可以使用 ``make test`` 或 ``python setup.py test`` 的调用测
     试套件。对于用 ``make test`` 测试的套件，扩展必须确保所有测试需要的依赖关
     系都被自动处理好。如果测试由 ``python setup.py test`` 调用，测试的依赖关系
-    由 `setup.py` 文件指定。测试套件也必须是分发的一部分。
+    由 `setup.py` 文件指定。测试套件也必须是发行版的一部分。
 3.  通过审核的扩展的 API 可以通过下面特性的检查:
     - 一个通过审核的扩展必须支持在同一个 Python 进程中支持多个应用
     - 必须支持使用工厂模式创建应用
 4.  必须以 BSD/MIT/WTFPL 许可
 5.  官方扩展的命名模式是 *Flask-ExtensionName* 或 *ExtensionName-Flask*
 6.  通过审核的扩展必须在 `setup.py` 文件里定义好它们的依赖关系，除非因
-    其在 PyPI 上不可用而不会被遇到
+    其在 PyPI 上不可用而不能满足这个依赖。
 7.  扩展的文档必须使用两种 Flask 的 Sphinx 文档主题中的一个
 8.  setup.py 描述（因此PyPI 描述同）必须链接到文档、网站（如果有），
     并且必须有一个链接来自动安装开发版本（ ``PackageName==dev`` ）
 9.  安装脚本中的 ``zip_safe`` 标志必须被设置为 ``False`` ，即使扩展对于
     压缩是安全的
-10. 现行扩展必须支持 Python 2.5 ， 2.6 以及 2.7
+10. 现行扩展必须支持 Python 2.6 以及 2.7
 
 
 .. _ext-import-transition:
