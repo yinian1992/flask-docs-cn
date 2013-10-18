@@ -11,9 +11,8 @@ Werkzeug 是一个 WSGI （在 web 应用和多种服务器之间开发和部署
 那么如何在你的电脑上安装这一切？条条大道通罗马，但是最强大的方式是
 virtualenv ，所以我们首先来看它。
 
-你首先需要 Python 2.5 或更高的版本，所以请确认有一个最新的 Python 2.x 安装。
-本文编写时，WSGI 的 Python 3 规格尚未定案，所以 Flask 不能支持 Python 3.x 系
-列。
+你首先需要 Python 2.6 或更高的版本，所以请确认有一个最新的 Python 2.x 安装。
+在 Python 3 中使用 Flask 请参考： :ref:`python3-support` 。
 
 .. _virtualenv:
 
