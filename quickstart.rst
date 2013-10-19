@@ -36,12 +36,12 @@
 那么，这段代码做了什么？
 
 1. 首先，我们导入了 :class:`~flask.Flask` 类。这个类的实例将会是我
-   们的 WSGI 应用程序。第一个参数是应用模块的名称。如果你使用单一的模
-   块（如本例），你应该使用 `__name__` ，因为取决于如果它以单独应用启
-   动或作为模块导入，名称将会不同（ ``'__main__'`` 相对实际的导入名
-   称）。详情参见 :class:`~flask.Flask` 的文档。
-2. 接下来，我们创建一个该类的实例。我们传递给它模块或包的名称。这样
-   Flask 才会知道它在寻找模板、静态文件等等。
+   们的 WSGI 应用程序。
+2. 接下来，我们创建一个该类的实例。第一个参数是应用模块或者包的名称。
+   如果你使用单一的模块（如本例），你应该使用 `__name__` ，因为取决于
+   如果它以单独应用启动或作为模块导入，名称将会不同（ ``'__main__'`` 
+   相对实际的导入名称）。这是必须的，这样Flask 才会知道到哪里去寻找模板、
+   静态文件等等。详情参见 :class:`~flask.Flask` 的文档。
 3. 然后，我们使用 :meth:`~flask.Flask.route` 装饰器告诉 Flask 哪个
    URL 应该触发我们的函数。
 4. 这个函数的名字也用作给特定的函数生成 URL，并且，它返回我们想要显
@@ -238,7 +238,7 @@ HTTP （web 应用会话的协议）知道访问 URL 的不同方法。默认情
 
 如果当前是 `GET` ， `HEAD` 也会自动的为你添加。你不必处理它。它确保 `HEAD`
 请求按照 `HTTP RFC`_ （描述 HTTP 协议的文档）来处理，所以你可以完全忽略这部
-分的 HTTP 规范。同样，自从 Flask 0.6， `OPTIONS` 也自动实现了。
+分的 HTTP 规范。同样，自从 Flask 0.6 起， `OPTIONS` 也实现了自动处理。
 
 你不知道一个 HTTP 方法是什么？不要担心，这里快速介绍 HTTP 方法和它们为什么重
 要：
@@ -252,7 +252,7 @@ HTTP 方法（也经常被叫做“谓词”）告诉服务器客户端想对请
 `HEAD`
     浏览器告诉服务器获取信息，但是只对 *消息头* 感兴趣。应用期望像 `GET` 请求
     一样处理它，但是不传递实际内容。在 Flask 中你完全不用处理它，底层的
-    Werkzeug 库已经做得很好。
+    Werkzeug 库已经替你处理好了。
 
 `POST`
     浏览器告诉服务器，它想在 URL 上 *发布* 新信息。并且，服务器必须确保数据已
@@ -383,7 +383,7 @@ u'Marked up \xbb HTML'
 
 .. admonition:: 内幕
 
-   如果你想理解它是如何工作和如果用它实现测试，请阅读此节，否则可跳过。
+   如果你想理解它是如何工作和如何用它实现测试，请阅读此节，否则可跳过。
 
 Flask 中的某些对象是全局对象，但是不是通常的类型。这些对象实际上是给定上下文
 的局部对象的代理。虽然很拗口，但实际上很容易理解。
@@ -436,8 +436,9 @@ Flask 中的某些对象是全局对象，但是不是通常的类型。这些�
                 return log_the_user_in(request.form['username'])
             else:
                 error = 'Invalid username/password'
-        # this is executed if the request method was GET or the
-        # credentials were invalid
+        # the code below is executed if the request method
+        # was GET or the credentials were invalid
+        return render_template('login.html', error=error)
 
 当 `form` 属性中的键值不存在会发生什么？在这种情况，一个特殊的
 :exc:`KeyError` 异常会抛出。你可以像捕获标准的 :exc:`KeyError` 来捕获它。但如
@@ -450,7 +451,7 @@ Flask 中的某些对象是全局对象，但是不是通常的类型。这些�
     searchword = request.args.get('q', '')
 
 我们推荐使用 `get` 来访问 URL 参数或捕获 `KeyError` ，因为用户可能会修改 URL ，
-向他们展现一个 400 bad request 页面不是用户友好的。
+向他们展现一个 400 bad request 页面会影响用户体验。
 
 想获取请求对象的完整方法和属性清单，请参阅 :class:`~flask.request` 的文档。
 
@@ -526,7 +527,7 @@ cookies 通过响应对象的 :attr:`~flask.Response.set_cookie` 方法。请求
 Flask 会将其转换为响应对象。如果你显式地想要这么做，你可以使用
 :meth:`~flask.make_response` 函数然后修改它。
 
-有时候你会想要在相应对象不存在的时候设置 cookie ，这在利用
+有时候你会想要在响应对象不存在的时候设置 cookie ，这在利用
 :ref:`deferred-callbacks` 模式时是可行的。
 
 
@@ -577,9 +578,9 @@ Flask 会将其转换为响应对象。如果你显式地想要这么做，你�
 1.  如果返回的是一个合法的响应对象，它会被从视图直接返回。
 2.  如果返回的是一个字符串，响应对象会用字符串数据和默认参数创建。
 3.  如果返回的是一个元组，且元组中的元素可以提供额外的信息。这样的元组
-    一定有 ``(response, status, headers)`` 形式中的至少一个元素。
-    `status` 值会覆盖状态代码， `headers` 可以是一个列表或额外的消息头值
-    字典。
+    必须是 ``(response, status, headers)`` 这样的形式，且至少包含一个元素。
+    `status` 值会覆盖状态代码， `headers` 可以是一个列表或字典，作为额外的
+    消息头值。
 4.  如果上述条件均不满足， Flask 会假设返回值是一个合法的 WSGI 应用程序，
     并转换为一个请求对象。
 
@@ -648,7 +649,7 @@ Flask 会将其转换为响应对象。如果你显式地想要这么做，你�
     # set the secret key.  keep this really secret:
     app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
-这里提到的 :func:`~flask.escape` 可以再你不使用模板引擎的时候做转义（如同
+这里提到的 :func:`~flask.escape` 可以在你不使用模板引擎的时候做转义（如同
 本例）。
 
 .. admonition:: 如何生成一个强壮的密钥
@@ -663,9 +664,9 @@ Flask 会将其转换为响应对象。如果你显式地想要这么做，你�
    把这个值复制粘贴到你的代码，你就搞定了密钥。
 
 使用基于 cookie 的会话需注意: Flask 会将你放进会话对象的值序列化到 cookie。
-如果你试图寻找一个跨请求不能存留的值， cookies 确实是启用的，并且你不会获
-得明确的错误信息，检查你页面请求中 cookie 的大小，并与 web 浏览器所支持的
-大小对比。
+如果你发现某些值在请求之间并没有持久化保存，而 cookies 确实已经启用了，你也没
+有得到明确的错误信息，请检查你的页面响应中的 cookie 的大小，并与 web 浏览器所
+支持的大小对比。
 
 
 消息闪现
@@ -685,7 +686,7 @@ Flask 会将其转换为响应对象。如果你显式地想要这么做，你�
 
 .. versionadded:: 0.3
 
-有时候你处于一种境地，你处理的数据应该是正确的，但实际上不是。比如你有一些
+有时候你处于一种境地，你处理的数据本应该是正确的，但实际上不是。比如你有一些
 客户端代码向服务器发送请求，但请求显然是畸形的。这可能是用户篡改了数据，或
 是客户端代码的失败。大多数情况下，正常地返回 ``400 Bad Request`` 就可以了，
 但是有时不这么做，并且代码要继续运行。
@@ -721,7 +722,6 @@ Flask 会将其转换为响应对象。如果你显式地想要这么做，你�
 以下均向小项目提供免费的方案:
 
 - `在 Heroku 上部署 Flask <http://devcenter.heroku.com/articles/python>`_
-- `在 ep.io 上部署 Flask <https://www.ep.io/docs/quickstart/flask/>`_
 - `在 dotCloud 上部署 Flask <http://docs.dotcloud.com/services/python/>`_ 
   附 `Flask 的具体说明 <http://flask.pocoo.org/snippets/48/>`_
 
