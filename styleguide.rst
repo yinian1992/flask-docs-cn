@@ -29,12 +29,10 @@ Pocoo 风格指引是所有 Pocoo 项目的风格指引，包括 Flask 。这份
 
   如果你在一个带括号的语句中换行，对齐到括号::
 
-
     this_is_a_very_long(function_call, 'with many parameters',
                         23, 42, 'and even more')
 
   对于有许多元素的元组或列表，在起始括号后立即换行::
-
 
     items = [
         'this is the first', 'set of items', 'with more items',
@@ -68,7 +66,7 @@ Pocoo 风格指引是所有 Pocoo 项目的风格指引，包括 Flask 。这份
 常规空格规则:
   - 不对不是单词的一元运算符使用空格（例如 ``-`` 、 ``~`` 等等），
     在圆括号内同样
-  - 在二元运算符见使用空格
+  - 在二元运算符间使用空格
 
   好例子::
 
@@ -170,7 +168,7 @@ Pocoo 风格指引是所有 Pocoo 项目的风格指引，包括 Flask 。这份
         :license: LICENSE_NAME, see LICENSE_FILE for more details.
     """
 
-  请留意何时的版权和许可证文件对于通过审核的 Flask 扩展是必须的。
+  请留意合适的版权和许可证文件对于通过审核的 Flask 扩展是必须的。
 
 
 注释
