@@ -290,6 +290,7 @@ Flask 提供了几个信号，其它的扩展可能会提供更多。另外，�
    .. versionadded:: 0.10
 
 .. data:: flask.appcontext_popped
+   :noindex:
 
    这个信号在应用上下文弹出栈时发送。发送者是应用对象。这通常在
    :data:`appcontext_tearing_down` 信号发送后发送。
