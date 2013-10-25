@@ -6,7 +6,7 @@
 .. versionadded:: 0.3
 
 Python 拥有的交互式 Shell 是人人都喜欢它的一个重要原因。交互式 Shell 
-允许你实时的运行 Python 命令并且立即得到反馈结果。Flask 本身并未内置
+允许你实时的运行 Python 命令并且立即得到返回结果。Flask 本身并未内置
 一个交互式 Shell ，因为它并不需要任何前台的特殊设置，仅仅导入您的应用
 然后开始探索和使用即可。
 
@@ -29,7 +29,7 @@ Python 拥有的交互式 Shell 是人人都喜欢它的一个重要原因。交
 
 从 Shell 创建一个合适的上下文，最简单的方法是使用
 :attr:`~flask.Flask.test_request_context` 方法，此方法
-会创建一个 :class:`~flask.ctx.RequestContext` 类:
+会创建一个 :class:`~flask.ctx.RequestContext` 对象:
 
 >>> ctx = app.test_request_context()
 
@@ -71,7 +71,7 @@ Python 拥有的交互式 Shell 是人人都喜欢它的一个重要原因。交
 >>> ctx.pop()
 
 被注册为 :meth:`~flask.Flask.teardown_request` 的函数将会在
-上下文环境改变之后自动执行。所以这是用来销毁请求上下文(如数据库
+上下文环境出栈之后自动执行。所以这是用来销毁请求上下文(如数据库
 连接等)资源的最佳地点。
 
 
