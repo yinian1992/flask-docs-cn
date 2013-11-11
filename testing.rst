@@ -7,8 +7,8 @@
 
 这一箴言的起源已经不可考了，尽管他不是完全正确的，但是仍然离真理
 不远。没有测试过的应用将会使得提高现有代码质量很困难，二不测试应用
-程序的开发者，会显得特别多疑。如果一个应用拥有自动生成的测试，那么
-您就可以安全的修改然后立刻知道是否有错误。
+程序的开发者，会显得特别多疑。如果一个应用拥有自动化测试，那么您就
+可以安全的修改然后立刻知道是否有错误。
 
 Flask 提供了一种方法用于测试您的应用，那就是将 Werkzeug 测试 
 :class:`~werkzeug.test.Client` 暴露出来，并且为您操作这些内容
@@ -58,13 +58,13 @@ Flask 提供了一种方法用于测试您的应用，那就是将 Werkzeug 测�
 ``TESTING`` 配置标志被激活，这将会使得处理请求时的错误捕捉失效，以便于
 您在进行对应用发出请求的测试时获得更好的错误反馈。
 
-这个测试客户端将会给我们一个通向应用的简单接口，我们可以激发对
+这个测试客户端将会给我们一个通向应用的简单接口，我们可以激发
 对向应用发送请求的测试，并且此客户端也会帮我们记录 Cookie 的
 动态。
 
 因为 SQLite3 是基于文件系统的，我们可以很容易的使用临时文件模块来
 创建一个临时的数据库并初始化它，函数 :func:`~tempfile.mkstemp` 
-实际上完成了两件事情：他反悔了一个底层的文件指针以及一个随机
+实际上完成了两件事情：它返回了一个底层的文件指针以及一个随机
 的文件名，后者我们用作数据库的名字。我们只需要将 `db_fd` 变量
 保存起来，就可以使用 `os.close` 方法来关闭这个文件。
 
@@ -85,7 +85,7 @@ Flask 提供了一种方法用于测试您的应用，那就是将 Werkzeug 测�
 --------------
 
 是进行第一个应用功能的测试的时候了。让我们检查当我们访问
-根路径(``/``)时应用程序是否正确的返回了了“No entries here so far”
+根路径(``/``)时应用程序是否正确地返回了了“No entries here so far”
 字样。为此，我们添加了一个新的测试函数到我们的类当中，
 如下面的代码所示::
 
@@ -111,7 +111,7 @@ Flask 提供了一种方法用于测试您的应用，那就是将 Werkzeug 测�
 某个给定路径。返回值将会是一个 :class:`~flask.Flask.response_class`
 对象。我们可以使用 :attr:`~werkzeug.wrappers.BaseResponse.data` 属性
 来检查程序的返回值(以字符串类型)。在这里，我们检查 ``'No entries here so far'``
-是不是输出的输出内容的一部分。
+是不是输出内容的一部分。
 
 再次运行，您应该看到一个测试成功通过了::
 
@@ -130,7 +130,7 @@ Flask 提供了一种方法用于测试您的应用，那就是将 Werkzeug 测�
 页面发送一些请求，这些请求都携带了表单数据（用户名和密码），因为
 登陆和登出页面都会重定向，我们将客户端设置为 `follow_redirects` 。
 
-将如下里那个歌方法加入到您的 `FlaskrTestCase` 类::
+将如下两个方法加入到您的 `FlaskrTestCase` 类::
 
    def login(self, username, password):
        return self.app.post('/login', data=dict(
@@ -194,8 +194,8 @@ Flask 提供了一种方法用于测试您的应用，那就是将 Werkzeug 测�
 --------------------
 
 除了如上文演示的使用测试客户端完成测试的方法，也有一个
-:meth:`~flask.Flask.test_request_context` 方法可以用于
-配合 `with` 声明，用于于激活一个临时的请求上下文。通过
+:meth:`~flask.Flask.test_request_context` 方法可以
+配合 `with` 语句用于激活一个临时的请求上下文。通过
 它，您可以访问 :class:`~flask.request` 、:class:`~flask.g` 
 和 :class:`~flask.session` 类的对象，就像在视图中一样。
 这里有一个完整的例子示范了这种用法::
@@ -206,16 +206,16 @@ Flask 提供了一种方法用于测试您的应用，那就是将 Werkzeug 测�
         assert flask.request.path == '/'
         assert flask.request.args['name'] == 'Peter'
 
-所有其他的访问受限的对象都可以使用同样的方法访问。
+所有其他的和上下文绑定的对象都可以使用同样的方法访问。
 
 如果您希望测试应用在不同配置的情况下的表现，这里似乎没有一个
 很好的方法，考虑使用应用的工厂函数(参考 :ref:`app-factories`)
 
 注意，尽管你在使用一个测试用的请求环境，函数
-:meth:`~flask.Flask.before_request` 以及它的兄弟
+:meth:`~flask.Flask.before_request` 以及
 :meth:`~flask.Flask.after_request` 都不会自动运行。
 然而，:meth:`~flask.Flask.teardown_request` 函数在
-测试请求的上下文离开 `with` 块之确实会执行。如果您
+测试请求的上下文离开 `with` 块的时候会执行。如果您
 希望 :meth:`~flask.Flask.before_request` 函数仍然执行。
 您需要手动调用 :meth:`~flask.Flask.preprocess_request` 方法::
 
@@ -295,7 +295,7 @@ Flask 提供了一种方法用于测试您的应用，那就是将 Werkzeug 测�
 
 .. versionadded:: 0.4
 
-有时，激发一个通常的请求，但是将保存当前的上下文
+有时，激发一个通常的请求，但是将当前的上下文
 保存更长的时间，以便于附加的内省发生是很有用的。
 在 Flask 0.4 中，通过 :meth:`~flask.Flask.test_client`
 函数和 `with` 块的使用可以实现::
@@ -308,10 +308,7 @@ Flask 提供了一种方法用于测试您的应用，那就是将 Werkzeug 测�
 
 如果您仅仅使用 :meth:`~flask.Flask.test_client` 方法，而
 不使用 `with` 代码块， `assert` 断言会失败，因为 `request`
-不再可访问(因为您试图在非真正请求中时候访问它)。然而，请
-记住任何 :meth:`~flask.Flask.after_request` 函数此时都已经
-被执行了，所以您的数据库和一切相关的东西都可能已经被关闭。
-
+不再可访问(因为您试图在非真正请求中时候访问它)。
 
 访问和修改 Sessions
 --------------------------------
@@ -327,7 +324,7 @@ Flask 提供了一种方法用于测试您的应用，那就是将 Werkzeug 测�
         rv = c.get('/')
         assert flask.session['foo'] == 42
 
-但是这样做并不能是您修改 Session 或在请求发出之前访问 Session。
+但是这样做并不能使您修改 Session 或在请求发出之前访问 Session。
 从 Flask 0.8 开始，我们提供一个叫做 “Session 事务” 的东西用于
 模拟适当的调用，从而在测试客户端的上下文中打开一个 Session，并
 用于修改。在事务的结尾，Session 将被恢复为原来的样子。这些都
