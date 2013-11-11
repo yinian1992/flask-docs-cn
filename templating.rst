@@ -5,7 +5,7 @@ Flask 利用 Jinja 2 作为模板引擎。你显然可以自由使用其它的�
 运行 Flask 本身仍然需要安装 Jinja2 。这个需求对启用富扩展是必要的，扩展可
 以依赖 Jinja2 存在。
 
-本节只给出一个非常快速的介绍，关于 Jinja2 如何继承到 Flask。如果你想获取
+本节只给出一个非常快速的介绍，关于 Jinja2 如何集成到 Flask。如果你想获取
 模板引擎本身语法的更多信息，请参考官方 
 `Jinja2 模板引擎 <http://jinja.pocoo.org/2/documentation/templates>`_ 。
 
@@ -32,20 +32,26 @@ Jinja 配置
 
    .. versionadded:: 0.6
 
+   .. versionchanged:: 0.10
+      现在这总是可用的，甚至在导入的模版里。
+
 .. data:: request
    :noindex:
 
-   当前的请求对象 (:class:`flask.request`)
+   当前的请求对象 (:class:`flask.request`)。当模版不是在活动的请求上下
+   文中渲染的时这个变量不可用。
 
 .. data:: session
    :noindex:
 
-   当前的会话对象 (:class:`flask.session`)
+   当前的会话对象 (:class:`flask.session`)。当模版不是在活动的请求上下
+   文中渲染的时这个变量不可用。
 
 .. data:: g
    :noindex:
 
-   实现全局变量的请求范围的对象 (:data:`flask.g`)
+   实现全局变量的请求范围的对象 (:data:`flask.g`)。当模版不是在活动的请求上下
+   文中渲染的时这个变量不可用。
 
 .. function:: url_for
    :noindex:
@@ -60,7 +66,7 @@ Jinja 配置
 .. admonition:: Jinja 上下文行为
 
    这些变量被添加到上下文变量，它们不是全局变量。区别在于，他们默认不会
-   在导入模板的上下文中出现。这样作，一方面是考虑到性能，另一方面是为了
+   在导入模板的上下文中出现。这样做，一方面是考虑到性能，另一方面是为了
    让事情显式透明。
 
    这对你以为这什么？如果你希望导入一个宏，你有两种可能来访问请求对象:
@@ -93,8 +99,6 @@ Jinja 配置
        <script type=text/javascript>
            doSomethingWith({{ user.username|tojson|safe }});
        </script>
-
-   ``|tojson`` 过滤器会为你妥善地转义斜线。
 
 控制自动转义
 ------------------------
@@ -181,5 +185,5 @@ Flask 中的上下文处理器自动向模板的上下文中插入新变量。�
 
     {{ format_price(0.33) }}
 
-你也可以构建 `format_price` 为一个模板处理器（见
+你也可以构建 `format_price` 为一个模板过滤器（见
 :ref:`registering-filters` ），但这展示了上下文处理器如何传递一个函数。
