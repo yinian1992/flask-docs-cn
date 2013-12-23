@@ -167,9 +167,8 @@ Flask 使用 Python 内置的日志系统，而且它确实向你发送你可能
 | ``%(message)s``  | 记录的消息，视为 ``msg % args``                    |
 +------------------+----------------------------------------------------+
 
-如果你想深度定制日志格式，你可以继承 :class:~logging.Formatter。 
-:class:~logging.Formatter 有三个需要
-关注的方法:
+如果你想深度定制日志格式，你可以继承 :class:`~logging.Formatter` 。
+:class:`~logging.Formatter` 有三个需要关注的方法:
 
 :meth:`~logging.Formatter.format`:
     处理实际上的格式。需要一个 :class:`~logging.LogRecord` 对象作为参数，并
