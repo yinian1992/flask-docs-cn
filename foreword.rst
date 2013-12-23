@@ -42,6 +42,6 @@ Flask 里有许多可以定制其行为的钩子。当你需要进一步定制�
 如果你对此有兴趣，请阅读 :ref:`becomingbig` 一章。如果你好奇 Flask 的设计原
 则，请查阅 :ref:`design` 章节。
 
-继续阅读 :ref:`installation` 、 the :ref:`quickstart` 、或
+继续阅读 :ref:`installation` 、 :ref:`quickstart` 、或
 :ref:`advanced_foreword`.
  

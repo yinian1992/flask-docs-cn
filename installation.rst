@@ -4,7 +4,7 @@
 ============
 
 Flask 依赖于两个外部库， `Werkzeug
-<http://werkzeug.pocoo.org/>`_ 和 `Jinja2 <http://jinja.pocoo.org/2/>`_.
+<http://werkzeug.pocoo.org/>`_ 和 `Jinja2 <http://jinja.pocoo.org/2/>`_ 。
 Werkzeug 是一个 WSGI （在 web 应用和多种服务器之间开发和部署的标
 准 Python 接口) 的工具集。Jinja2 负责渲染模板。
 
