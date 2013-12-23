@@ -41,7 +41,7 @@ Flask 允许我们用 :meth:`~flask.Flask.before_request` 、
 
    如果你需要一个时刻来找到你的方位，看一下 `示例源码`_ 是怎么组织的。在
    Flask 中，你可以把你应用所有的代码放在一个 Python 模块里。但你无需这么做，
-   并且在你的应用 :ref:`grows larger <larger-applications>` 的时候，这显然不妥。
+   并且在你的应用 :ref:`规模扩大 <larger-applications>` 的时候，这显然不妥。
 
 .. _示例源码:
    http://github.com/mitsuhiko/flask/tree/master/examples/flaskr/
