@@ -50,7 +50,7 @@ show_entries.html
 
 这个模板继承了上面的 `layout.html` 模板来显示消息。注意 `for` 循环遍历所有
 我们用 :func:`~flask.render_template` 函数传入的消息。我们还告诉表单用 `HTTP`
-的 `POST` 方法提交到 add_entry` 函数:
+的 `POST` 方法提交到 `add_entry` 函数:
 
 .. sourcecode:: html+jinja
 
