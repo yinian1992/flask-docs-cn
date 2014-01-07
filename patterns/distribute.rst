@@ -32,8 +32,8 @@ Python 库和扩展程序的外部库。它依赖于随 Python 预装的 ``distu
 基础的安装脚本
 ------------------
 
-因为您运行着 Flask，您新通商要么安装有 setuptools，要么安装有 distribute。
-如果您系统中真的没有这两样，或者担心他没有，这里有一个脚本可以用来安装它:
+因为您运行着 Flask，您系统上要么安装有 setuptools，要么安装有 distribute。
+如果您系统中真的没有这两样，或者担心其没有，这里有一个脚本可以用来安装它:
 `distribute_setup.py` 。您只要下载并用 Python 解释器运行它即可。
 
 考虑这些操作可能会有风险，因此建议您参考 :ref:`你最好使用 virtualenv
