@@ -1,21 +1,15 @@
-Upgrading to Newer Releases
+升级到最新版本
 ===========================
 
-Flask itself is changing like any software is changing over time.  Most of
-the changes are the nice kind, the kind where you don't have to change
-anything in your code to profit from a new release.
+Flask 如同其它软件一样，会随着时间不停地更新自己，其中大部分都会是非常体贴的，
+你无需改动一行自身代码就可以应用新版本的 Flask。
 
-However every once in a while there are changes that do require some
-changes in your code or there are changes that make it possible for you to
-improve your own code quality by taking advantage of new features in
-Flask.
+不过，每当 Flask 有更新时，我们都建议你适当地修改自己的代码，以充分地利用这些新功能，
+提高自己代码地质量。
 
-This section of the documentation enumerates all the changes in Flask from
-release to release and how you can change your code to have a painless
-updating experience.
+本章节文档为您列举了 Flask 各版本之间地差异，以及你如何修改自身代码才能无痛地升级。
 
-If you want to use the `easy_install` command to upgrade your Flask
-installation, make sure to pass it the ``-U`` parameter::
+如果你使用 `easy_install` 命令更新、安装 Flask，确保命令中包括 ``-U`` 参数 ::
 
     $ easy_install -U Flask
 
@@ -24,17 +18,14 @@ installation, make sure to pass it the ``-U`` parameter::
 Version 0.10
 ------------
 
-The biggest change going from 0.9 to 0.10 is that the cookie serialization
-format changed from pickle to a specialized JSON format.  This change has
-been done in order to avoid the damage an attacker can do if the secret
-key is leaked.  When you upgrade you will notice two major changes: all
-sessions that were issued before the upgrade are invalidated and you can
+版本 0.9 到 0.10 最大变化在于 cookie 序列化格式从 pickle 转变为了专门的 JSON 格式，
+这一更新是为了避免密钥丢失时遭受黑客攻击带来损失。在更新是你会注意到以下两大主要变化：
+all sessions that were issued before the upgrade are invalidated and you can
 only store a limited amount of types in the session.  The new sessions are
 by design much more restricted to only allow JSON with a few small
 extensions for tuples and strings with HTML markup.
 
-In order to not break people's sessions it is possible to continue using
-the old session system by using the `Flask-OldSessions_` extension.
+为了避免破坏用户的 session 数据，你可以使用 Flask 扩展 `Flask-OldSessions_` 来代替原先的 session。
 
 .. _Flask-OldSessions: http://packages.python.org/Flask-OldSessions/
 
@@ -42,11 +33,12 @@ the old session system by using the `Flask-OldSessions_` extension.
 Version 0.9
 -----------
 
+从函数中返回元组的操作被简化了，返回元组时你不再需要为你创建的 response 对象定义参数了，
 The behavior of returning tuples from a function was simplified.  If you
 return a tuple it no longer defines the arguments for the response object
 you're creating, it's now always a tuple in the form ``(response, status,
-headers)`` where at least one item has to be provided.  If you depend on
-the old behavior, you can add it easily by subclassing Flask::
+headers)`` where at least one item has to be provided. 
+如果你的代码依赖于旧版本，可以通过创建 Flask 的子类简单地解决这个问题 :: 
 
     class TraditionalFlask(Flask):
         def make_response(self, rv):
@@ -54,12 +46,9 @@ the old behavior, you can add it easily by subclassing Flask::
                 return self.response_class(*rv)
             return Flask.make_response(self, rv)
 
-If you maintain an extension that was using :data:`~flask._request_ctx_stack`
-before, please consider changing to :data:`~flask._app_ctx_stack` if it makes
-sense for your extension.  For instance, the app context stack makes sense for
-extensions which connect to databases.  Using the app context stack instead of
-the request stack will make extensions more readily handle use cases outside of
-requests.
+如果你维护的扩展曾使用 :data:`~flask._request_ctx_stack` ，可以考虑降至替换为 
+:data:`~flask._app_ctx_stack`，但仍须检查是否可行。例如，对于操作数据的扩展来说，app context stack
+更说得通，在请求无关的用例中使用它比 request stack 处理起来更容易。
 
 Version 0.8
 -----------
