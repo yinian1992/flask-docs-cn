@@ -3,12 +3,12 @@
 安装
 ============
 
-Flask 依赖于两个外部库， `Werkzeug
+Flask 依赖于两个外部库：`Werkzeug
 <http://werkzeug.pocoo.org/>`_ 和 `Jinja2 <http://jinja.pocoo.org/2/>`_ 。
 Werkzeug 是一个 WSGI （在 web 应用和多种服务器之间开发和部署的标
-准 Python 接口) 的工具集。Jinja2 负责渲染模板。
+准 Python 接口) 的工具集Jinja2 负责渲染模板。
 
-那么如何在你的电脑上安装这一切？条条大道通罗马，但是最强大的方式是
+那么如何在你的电脑上安装这一切？虽说条条大道通罗马，但是最强大的方式是
 virtualenv ，所以我们首先来看它。
 
 你首先需要 Python 2.6 或更高的版本，所以请确认有一个最新的 Python 2.x 安装。
@@ -19,16 +19,15 @@ virtualenv ，所以我们首先来看它。
 virtualenv
 ----------
 
-你在开发中很可能想要使用 virtualenv，并且如果你拥有生产环境的 shell 权限时，
-你同样会乐于在生产环境中使用它。
+你在开发中很可能想要使用 virtualenv，如果你拥有生产环境的 shell 权限，
+同样会乐于在生产环境中使用它。
 
 virtualenv 解决了什么问题？如果你像我一样喜欢 Python，你可能还要在基于 Flask
-的 web 应用以外的项目中使用它。但你拥有的项目越多，你用不同版本 Python 工作
-的可能性越大，或者至少 Python 库的版本不同。让我们直面现实：库破坏向后兼容性
-的情况相当常见，而且零依赖的正经应用也不大可能存在。如此，当你的项目中的两个
-或更多出现依赖性冲突，你会怎么做？
+的 web 应用以外的项目中使用它。你拥有的项目越多，同时使用不同版本 Python 工作
+的可能性越大，或者至少需要不同版本的 Python 库。我们需要面对的是：常常有库会破坏自身的向后兼容性，
+然而正常应用零依赖的可能性也不大。当你的项目中的两个或更多出现依赖性冲突时，你会怎么做？
 
-virtualenv 来拯救世界！virtualenv 允许多个并列的 Python 安装，每个项目一份。
+virtualenv 来拯救世界！virtualenv 允许多个版本的 Python 同时存在，对应不同的项目。
 它实际上并没有安装独立的 Python 副本，但是它确实提供了一种巧妙的方式来让各项
 目环境保持独立。让我们来看看 virtualenv 是怎么工作的。
 
@@ -40,16 +39,16 @@ virtualenv 来拯救世界！virtualenv 允许多个并列的 Python 安装，�
 
     $ sudo pip install virtualenv
 
-上述的命令会在你的系统中安装 virtualenv。它甚至可能会出现在包管理器中。如果
-你使用 Ubuntu ，请尝试::
+上述的命令会在你的系统中安装 virtualenv。它甚至可能会存在于包管理器中，如果
+你使用 Ubuntu ，可以尝试::
 
     $ sudo apt-get install python-virtualenv
 
-如果你所在的 Windows 上并没有 `easy_install` 命令，你必须先安装它。查阅
+如果你所使用的 Windows 上并没有 `easy_install` 命令，你必须先安装它。查阅
 :ref:`windows-easy-install` 章节来了解如何安装。之后，运行上述的命令，但是要
 去掉 `sudo` 前缀。
 
-一旦你安装了 virtualenv，激活 shell 然后创建你自己的环境。我通常创建一个
+virtualenv 安装完毕，你可以立即打开 shell 然后创建你自己的环境。我通常创建一个
 项目文件夹，并在其下创建一个 `venv` 文件夹 ::
 
     $ mkdir myproject
@@ -58,7 +57,7 @@ virtualenv 来拯救世界！virtualenv 允许多个并列的 Python 安装，�
     New python executable in venv/bin/python
     Installing distribute............done.
 
-现在，无论何时你想在某个项目上工作，你只需要激活相应的环境。在 OS X 和 Linux
+现在，无论何时你想在某个项目上工作，只需要激活相应的环境。在 OS X 和 Linux
 上，执行如下操作::
 
     $ . venv/bin/activate
@@ -67,24 +66,24 @@ virtualenv 来拯救世界！virtualenv 允许多个并列的 Python 安装，�
 
     $ venv\scripts\activate
 
-无论哪种方式，你现在应该在使用你的 virtualenv（注意你的 shell 提示符显示的是
+无论通过哪种方式，你现在应该已经激活了 virtualenv（注意你的 shell 提示符显示的是
 活动的环境）。
 
-现在你只需要键入以下的命令来激活你的 virtualenv 中的 Flask::
+现在你只需要键入以下的命令来激活 virtualenv 中的 Flask::
 
     $ pip install Flask
 
 几秒钟后，一切都搞定了。
 
 
-系统全局安装
+全局安装
 ------------------------
 
-这样也是可能的，虽然我不推荐。只需要以 root 权限运行 `pip`::
+这样也是可以的，虽然我不推荐。只需要以 root 权限运行 `pip`::
 
     $ sudo pip install Flask
 
-（在 Windows 上，在管理员权限的命令提示符中运行这条命令，去掉 `sudo` 。）
+（在 Windows 上，在管理员权限的命令提示符中去掉 `sudo` 运行这条命令 。）
 
 
 活在边缘
