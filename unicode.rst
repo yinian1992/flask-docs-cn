@@ -1,62 +1,56 @@
 Flask 中的 Unicode
 ===================
 
-Flask 像 Jinja2 和 Werkzeug 一样，涉及到文本时，完全基于 Unicode 。不仅是
-这些库，大多数 web 相关的 Python 库这样处理文本。如果你还不知道 Unicode
-是什么，你可能需要阅读 `The Absolute Minimum Every Software Developer
-Absolutely, Positively Must Know About Unicode and Character Sets
-<http://www.joelonsoftware.com/articles/Unicode.html>`_ 。这部分文档试图
-掩盖最基本的东西，使得你在 Unicode 相关的事情上有愉快的经历。
+Flask 与 Jinja2 、 Werkzeug 一样，文本方面完全基于 Unicode ，大多数 web 相关的 
+Python 库同样这样处理文本。如果你还不知道 Unicode 是什么，可能需要阅读 
+`The Absolute Minimum Every Software Developer Absolutely, 
+Positively Must Know About Unicode and Character Sets
+<http://www.joelonsoftware.com/articles/Unicode.html>`_ 。
+这些文档对基本知识做了一些封装，保证你处理 Unicode 相关的事情有愉快的经历。
 
 自动转换
 --------------------
 
-Flask 有一些关于你应用的假设（当然你可以更改）来给你基本的且无痛苦的
-Unicode 支持:
+为了提供基本无痛的 Unicode 支持，Flask做了这些假设：
 
--   你网站上文本的编码是 UTF-8
+-   你网站上文本编码是 UTF-8
 -   你在内部对文本始终只使用 Unicode ，除非是只有 ASCII 字符的字面量字符串
--   无论何时你使用需要传送字节的协议会话，编码和解码都会发生
+-   只要协议会话需要传送字节，都离不开编码和解码过程
 
-所以这对你以为这什么？
+所以，这对你来说有什么意义？
 
-HTTP 是基于字节的。不仅是协议，用于定位服务器上文档的系统也是这样（即 URI
-或 URL ）。然而，通常在 HTTP 上传送的 HTML  支持种类繁多的字符集，并且用于
-并在 HTTP header 中传输。为了不使这太复杂， Flask 假设你发出你想要的 UTF-8
-编码的 Unicode 。 Flask 会为你编码并设置何时适当的标头。
+HTTP 是基于字节的，不仅是说协议，用于定位服务器文档的系统也是这样（即 URI
+或 URL ）。然而，通常在 HTTP 上传送的 HTML 支持很多种字符集，并且需要在 HTTP 
+header 中注明。为了避免不必要的复杂性， Flask 假设你发送的都是 UTF-8
+编码的 Unicode，Flask 会为你完成编码工作，并设置适当的 header。
 
-当你通过 SQLAlchemy 或类似的 ORM 系统与数据库会话也是同样的。一些数据库有
-传输 Unicode 的协议，而如果它们没有， SQLALchemy 或其它的 ORM 也会顾及到。
+如果你使用 SQLAlchemy 或类似的 ORM 系统与数据库会话，道理也是同样的：一些数据库
+已经使用传输 Unicode 的协议，即使没有，SQLALchemy 或其它 ORM 也会顾及到。
 
 金科玉律
 ---------------
 
-经验法则：如果你不处理二进制数据，请使用 Unicode 。在 Python 2.x 中，使用
-Unicode 以为着什么？
+经验法则：如果你不需要处理二进制数据，请一律使用 Unicode 。在 Python 2.x 中，使用
+Unicode 意味着什么？
 
--   只要你只在使用 ASCII charpoints （基本是数字、非变音或非奇特的拉丁字
-    母），你可以使用常规的字符串常量（ ``'Hello World'`` ）
--   如果你需要在一个字符串里有 ASCII 之外的东西，你需要把这个字符串标记
-    为 Unicode 字符串，方法是加上一个小写 `u` 的前缀（比如
-    ``u'Hänsel und Gretel'`` ）
+-   使用 ASCII charpoints （基本是数字、非变音或非奇特的拉丁字母），你可以使用常规的
+    字符串常量（ ``'Hello World'`` ）
+-   如果你的字符串里有 ASCII 之外的东西，需要把这个字符串标记为 Unicode 字符串，
+    方法是加上一个小写 `u` 的前缀（比如 ``u'Hänsel und Gretel'`` ）
 -   如果你在 Python 文件中使用了非 Unicode 字符，你需要告诉 Python 你的文
     件使用了何种编码。我再次建议为此使用 UTF-8 。你可以在你 Python 源文件
     的第一行或第二行写入 ``# -*- coding: utf-8 -*-`` 来告知解释器你的编码
     类型。
--   Jinja 被配置为从 UTF-8 解码模板文件。所以确保你的编辑器也保存文件为
-    UTF-8 编码。
+-   Jinja 被配置为从 UTF-8 解码模板文件，所以确保你的编辑器也保存文件为 UTF-8 编码。
 
 自行编解码
 ------------------------------
 
-如果你在于一个不真正基于 Unicode 的文件系统或别的什么东西会话，你需要确保
-你在使用 Unicode 接口工作时妥善地解码。所以，比如当你想要在文件系统中加载
-一个文件，并嵌入到 Jinja2 模板是，你需要按照文件的编码来解码。这里有一个
-老问题就是文本文件不指定有效的编码，所以限定你在文本文件中使用 UTF-8 会帮
-你自己一个忙。
+如果你的工作环境是一个不真正基于 Unicode 的文件系统之类的话，你需要确保使用 Unicode 接口妥善地解码。比如，当你想要在文件系统中加载一个文件，并嵌入到 Jinja2 模板时，
+你需要按照文件的编码来解码。这里有一个老问题就是文本文件不指定有效的编码，
+所以限定你在文本文件中使用 UTF-8 也是在帮自己的忙。
 
-无论如何，以 Unicode 加载这样文件，你可以使用内置的 :meth:`str.decode` 方
-法::
+无论如何，以 Unicode 加载这样文件，你可以使用内置的 :meth:`str.decode` 方法::
 
     def read_file(filename, charset='utf-8'):
         with open(filename, 'r') as f:
@@ -76,7 +70,7 @@ Unicode 以为着什么？
 
 -   Vim: 在你的 ``.vimrc`` 文件中加入 ``set enc=utf-8`` 
 
--   Emacs: 使用编码 cookie 或把这放入到你的 ``.emacs`` 文件::
+-   Emacs: 使用 encoding cookie，或者把这段文字加入到你的 ``.emacs`` 配置文件::
 
         (prefer-coding-system 'utf-8)
         (setq default-buffer-file-coding-system 'utf-8)
