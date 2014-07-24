@@ -5,7 +5,7 @@ Application / App
   应用
 
 Application Context
-  应用上下文
+  应用环境
 
 Blueprint
   蓝图
@@ -17,10 +17,7 @@ Configuration / Config
   配置
 
 Context Locals
-  上下文局部变量
-
-Context-local
-  上下文本地（局域）的
+  环境局部变量
 
 Debugger
   调试器
@@ -50,7 +47,7 @@ Redirect
   重定向
 
 Request Context
-  请求上下文
+  请求环境
 
 Sender
   （信号的）发送者
