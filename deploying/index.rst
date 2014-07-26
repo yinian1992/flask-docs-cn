@@ -11,7 +11,7 @@
 度部分。请记住你的 :class:`Flask` 应用对象就是实际的 WSGI 应用。
 
 选择托管服务来快速配置并运行，参阅快速上手中的
-:ref:`quickstart_deployment` 部分。
+:ref:`depolying-to-a-web-server` 部分。
 
 .. toctree::
    :maxdepth: 2
