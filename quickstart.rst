@@ -286,7 +286,7 @@ HTTP 方法（也经常被叫做“谓词”）告知服务器，客户端想对
 
 .. _HTTP RFC: http://www.ietf.org/rfc/rfc2068.txt
 
-.._static-files:
+.. _static-files:
 
 静态文件
 ------------
@@ -309,7 +309,7 @@ HTTP 方法（也经常被叫做“谓词”）告知服务器，客户端想对
 
 用 Python 生成 HTML 十分无趣，而且相当繁琐，因为你必须手动对 HTML 做转
 义来保证应用的安全。为此，Flask 配备了
-`Jinja2 <http://jinja.pocoo.org/2/>`_ 模板引擎。
+`Jinja2 <http://jinja.pocoo.org>`_ 模板引擎。
 
 你可以使用 :func:`~flask.render_template` 方法来渲染模板。你需要做的一
 切就是将模板名和你想作为关键字的参数传入模板的变量。这里有一个展示如何
@@ -740,15 +740,16 @@ Flask 0.3 开始，Flask 就已经预置了日志系统。
 
 附带的 :attr:`~flask.Flask.logger` 是一个标准日志类
 :class:`~logging.Logger` ，所以更多信息请查阅 `logging
-文档 <http://docs.python.org/library/logging.html>`_ 。
+的文档 <http://docs.python.org/library/logging.html>`_ 。
 
 .. _hooking-in-wsgi-middlewares:
 
 整合 WSGI 中间件
 ---------------------------
 
-如果你想给你的应用添加 WSGI 中间件，你可以封装内部 WSGI 应用。例如若是
-你想用 Werkzeug 包中的某个中间件来应付 lighttpd 中的 bugs ，可以这样做::
+如果你想给你的应用添加 WSGI 中间件，你可以封装内部 WSGI 应用。例如若
+是你想用 Werkzeug 包中的某个中间件来应付 lighttpd 中的 bugs ，可以这
+样做::
 
     from werkzeug.contrib.fixers import LighttpdCGIRootFix
     app.wsgi_app = LighttpdCGIRootFix(app.wsgi_app)
@@ -758,8 +759,8 @@ Flask 0.3 开始，Flask 就已经预置了日志系统。
 部署到 Web 服务器
 -------------------------
 
-准备好部署你的 Flask 应用了？你可以立即部署到托管平台来圆满完成快速入
-门，以下厂商均向小项目提供免费的方案:
+准备好部署你的 Flask 应用了？你可以立即部署到托管平台来圆满完成快速
+入门，以下厂商均向小项目提供免费的方案:
 
 - `在 Heroku 上部署 Flask <http://devcenter.heroku.com/articles/python>`_
 - `在 dotCloud 上部署 Flask <http://docs.dotcloud.com/services/python/>`_ 
@@ -771,4 +772,4 @@ Flask 0.3 开始，Flask 就已经预置了日志系统。
 - `在 Google App Engine 上部署 Flask <https://github.com/kamalgill/flask-appengine-template>`_
 - `用 Localtunnel 共享你的本地服务器 <http://flask.pocoo.org/snippets/89/>`_
 
-如果你有自己的主机并且想自己托管，参见 :ref:`deployment` 章节。
+如果你有自己的主机，并且准备自己托管，参见 :ref:`deployment` 章节。
