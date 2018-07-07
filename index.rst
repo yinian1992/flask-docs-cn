@@ -5,7 +5,7 @@
 
 .. image:: _static/logo-full.png
    :alt: Flask: web development, one drop at a time
-   :class: floatingflask
+   :align: right
 
 欢迎阅读 Flask 文档。  本文档分为几个部分。我推荐您先从
 :ref:`installation` 开始，之后再浏览 :ref:`quickstart` 章节。 

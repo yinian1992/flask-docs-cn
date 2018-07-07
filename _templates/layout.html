@@ -1,0 +1,30 @@
+{% extends "basic/layout.html" %}
+
+{% set metatags %}
+  {{- metatags }}
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+{%- endset %}
+
+{% block extrahead %}
+  {%- if canonical_url %}
+    <link rel="canonical" href="{{ canonical_url }}">
+  {%- endif %}
+  <script>DOCUMENTATION_OPTIONS.URL_ROOT = '{{ url_root }}';</script>
+  {{ super() }}
+{%- endblock %}
+
+{% set version_warning = versions.banner() %}
+
+{% block document %}
+  {%- if version_warning %}
+    <p class="version-warning"><strong>Warning: </strong> {{ version_warning }}</p>
+  {%- endif %}
+  {{- super() }}
+{%- endblock %}
+
+{% block relbar2 %}{% endblock %}
+
+{% block sidebar2 %}
+  <span id="sidebar-top"></span>
+  {{- super() }}
+{%- endblock %}

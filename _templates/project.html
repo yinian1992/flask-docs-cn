@@ -1,0 +1,30 @@
+<h3>关于</h3>
+<p>这是一个「<a href="http://jinkan.org/">人间</a>」的文档翻译项目，你可以通过下面的链接获取其他格式的文档或是参与我们的文档翻译计划：</p>
+<ul>
+  <li><a href="https://github.com/yinian1992/flask-docs-cn">源代码</a></li>
+  <li><a href="#">下载 HTML 压缩包（简体中文）</a></li>
+  <li><a href="#">下载 PDF（简体中文）</a></li>
+  <li><a href="#">下载 ePub（简体中文）</a></li>
+</ul>
+<h3>译者</h3>
+<ul class="translator-list">
+  <li class="translator">
+    <strong>亦念</strong><br>
+    <a href="mailto:yinian@jinkan.org">yinian@jinkan.org</a>
+  </li>
+  <li class="translator">
+    <strong>云尔</strong><br>
+    <a href="mailto:yun.er.run@gmail.com">yun.er.run@gmail.com</a>
+  </li>
+  <li class="translator">
+    <strong>atupal</strong><br>
+    <a href="mailto:me@atupal.org">me@atupal.org</a>
+  </li>
+</ul>
+
+{% if project_links %}
+  <h3>项目链接</h3>
+  <ul>{% for item in project_links %}
+    <li><a href="{{ item.url }}">{{ item.title }}</a>
+  {% endfor %}</ul>
+{%- endif %}

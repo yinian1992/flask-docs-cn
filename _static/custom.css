@@ -1,0 +1,11 @@
+body {
+    font-family: 'Source Han Serif CN', 'Garamond', 'Georgia', serif;
+}
+
+.translator-list>li.translator {
+    margin-bottom: .5em;
+}
+
+.translator-list>li.translator:last-child {
+    margin-bottom: 0;
+}
