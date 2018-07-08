@@ -3,7 +3,7 @@ python:
   - "2.7"
   - "3.6"
 # command to install dependencies
-install: "pip install flask[doc] --use-mirrors"
+install: "pip install flask[doc]"
 # command to run tests
 script: sphinx-build -W -b html -d _build/doctrees . _build/html
 # Flags used here, not in `make html`:

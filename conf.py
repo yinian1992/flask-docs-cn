@@ -44,7 +44,7 @@ html_theme = 'flask'
 html_theme_path = ["_themes"]
 html_context = {
     'project_links': [
-        ProjectLink('捐款给 Pallets', 'https://psfmember.org/civicrm/contribute/transact?reset=1&id=20'),
+        ProjectLink('捐助 Pallets', 'https://psfmember.org/civicrm/contribute/transact?reset=1&id=20'),
         ProjectLink('Flask 官方网站', 'https://palletsprojects.com/p/flask/'),
         ProjectLink('PyPI 发布页', 'https://pypi.org/project/Flask/'),
         ProjectLink('源代码', 'https://github.com/pallets/flask/'),
