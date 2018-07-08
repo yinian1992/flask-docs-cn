@@ -1,4 +1,4 @@
-.. _advanced_foreword:
+.. _advanced-foreword:
 
 给有经验程序员的前言
 ====================================
