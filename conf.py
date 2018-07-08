@@ -248,7 +248,7 @@ intersphinx_mapping = {
     'http://werkzeug.pocoo.org/docs/': None,
     'http://www.sqlalchemy.org/docs/': None,
     'http://wtforms.simplecodes.com/docs/0.5/': None,
-    'http://discorporate.us/projects/Blinker/docs/1.1/': None
+    'https://pythonhosted.org/blinker/': None
 }
 
 pygments_style = 'flask_theme_support.FlaskyStyle'
