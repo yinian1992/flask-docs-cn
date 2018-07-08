@@ -3,9 +3,11 @@ python:
   - "2.7"
   - "3.6"
 # command to install dependencies
-install: "pip install flask[doc]"
+install: 
+  - pip install flask[docs]
 # command to run tests
-script: sphinx-build -W -b html -d _build/doctrees . _build/html
+script:
+  - sphinx-build -W -b html -d _build/doctrees . _build/html
 # Flags used here, not in `make html`:
 #  -n   Run in nit-picky mode. Currently, this generates warnings for all missing references.
 #  -W   Turn warnings into errors. This means that the build stops at the first warning and sphinx-build exits with exit status 1.
