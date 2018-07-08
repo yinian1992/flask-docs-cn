@@ -7,7 +7,7 @@
     应用
 
   Application Context
-    应用环境
+    应用上下文
 
   Blueprint
     蓝图
@@ -52,7 +52,7 @@
     重定向
 
   Request Context
-    请求环境
+    请求上下文
 
   Sender
     （信号的）发送者
