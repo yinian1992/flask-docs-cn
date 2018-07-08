@@ -1,65 +1,70 @@
 术语表
 ==============
 
-Application / App
-  应用
+.. glossary::
 
-Application Context
-  应用环境
+  Application
+    应用
 
-Blueprint
-  蓝图
+  Application Context
+    应用环境
 
-Bubble up
-  冒泡
+  Blueprint
+    蓝图
 
-Configuration / Config
-  配置
+  Bubble up
+    冒泡
 
-Context Locals
-  环境局部变量
+  Configuration / Config
+    配置
 
-Debugger
-  调试器
+  Context Locals
+    环境局部变量
 
-Handler
-  处理程序
+  Debugger
+    调试器
 
-Handling
-  处理
+  Handler
+    处理程序
 
-Header
-  标头
+  Handling
+    处理
 
-Logger
-  日志记录器
+  Header
+    标头
+
+  Hook
+    钩子
+
+  Logger
+    日志记录器
+    
+  Message Flashing
+    消息闪现
+
+  Object Literal
+    对象字面量
+
+  Processor
+    处理器
   
-Message Flashing
-  消息闪现
+  Redirect
+    重定向
 
-Object Literal
-  对象字面量
+  Request Context
+    请求环境
 
-Processor
-  处理器
- 
-Redirect
-  重定向
+  Sender
+    （信号的）发送者
 
-Request Context
-  请求环境
+  Set / Setting
+    设定
 
-Sender
-  （信号的）发送者
+  Signal
+    信号
+    
+  Token
+    令牌
 
-Set / Setting
-  设定
-
-Signal
-  信号
-  
-Token
-  令牌
-
-Worker
-  职程
+  Worker
+    职程
