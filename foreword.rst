@@ -43,5 +43,5 @@ Flask 类。如果你对此有兴趣，请阅读 :ref:`becomingbig` 章节。如
 设计原则，请阅读 :ref:`design` 章节。
 
 继续阅读 :ref:`installation` 、 :ref:`quickstart` 、或
-:ref:`advanced_foreword`.
+:ref:`advanced-foreword`.
  
