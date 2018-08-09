@@ -1,101 +1,160 @@
-.. _tutorial-templates:
+.. currentmodule:: flask
 
-步骤 6: 模板
-=====================
+.. _templates:
 
-接下来我们应该创建模板了。如果我们现在请求 URL，只会得到 Flask 无法找到模板的异常。
-模板使用 `Jinja2`_ 语法并默认开启自动转义。这意味着除非你使用
-:class:`~flask.Markup` 标记或在模板中使用 ``|safe`` 过滤器，否则 Jinja 2 会
-确保特殊字符，比如 ``<`` 或 ``>`` 被转义为等价的 XML 实体。
+模板
+=========
 
-我们也会使用模板继承在网站的所有页面中重用布局。
+你已经为应用写好了认证视图，但你在运行服务器之后尝试访问任何 URL 都会见到
+``TemplateNotFound`` 错误。这是因为视图调用了 :func:`render_template` 函数，但是
+我们还没有编写模板。模板文件应该存放在 ``flaskr`` 包中的 ``templates`` 目录下。
 
-将下面的模板放在 `templates` 文件夹里:
+在你的应用里，会用到模板来渲染显示在用户浏览器中的 `HTML`_ 。在 Flask 中，默认使用
+`Jinja`_ 模板引擎来 *自动转义* 渲染到 HTML 模板中的数据。这意味着渲染用户输入也是安
+全的，任何用户输入的可能污染 HTML 的东西，比如 ``<`` 和 ``>`` 这种将会被 *转义* 成
+*安全* 的值，既能保证在浏览器中显示一致，又避免了未预期的结果。
 
-.. _Jinja2: http://jinja.pocoo.org/2/documentation/templates
+Jinja 的写法与直接写 Python 几乎一样。Jinja 用特殊的分隔符来区分 Jinja 语句和模板
+中的静态内容。 ``{{`` 和 ``}}`` 包裹的内容即是输出最终文档的 Jinja 表达式。
+``{%`` 和 ``%}`` 表示控制流语句，比如 ``if`` 和 ``for`` 。因为块级语句中的静态文本
+可能会产生缩进，所以 Jinja 中用开始和结束标记指示块级语句，而不是像 Python 一样用缩
+进。
 
-layout.html
------------
 
-这个模板包含 HTML 主体结构、标题和一个登入链接（用户已登入则提供登出）。
-如果有，它也会显示闪现消息。 ``{% block body %}`` 块可以被子模板中相同名
-字的块（ ``body`` ）替换。
+.. _Jinja: http://jinja.pocoo.org/docs/templates/
+.. _HTML: https://developer.mozilla.org/docs/Web/HTML
 
-:class:`~flask.session` 字典在模板中也是可用的。你可以用它来检查用户是否已登入。
-注意，在 Jinja 中你可以访问不存在的对象/字典属性或成员。比如下面的代码，
-即便 ``'logged_in'`` 键不存在，仍然可以正常工作:
+.. _the-base-layout:
 
-.. sourcecode:: html+jinja
+基础布局
+---------------
+
+应用的各个页面应采用相同的基础布局，而主题内容可以不同。模板可以 *继承* 基础模板并且
+覆盖部分模板，而不是手动重写整个 HTML 结构。
+
+.. code-block:: html+jinja
+    :caption: ``flaskr/templates/base.html``
 
     <!doctype html>
-    <title>Flaskr</title>
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-    <div class=page>
+    <title>{% block title %}{% endblock %} - Flaskr</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <nav>
       <h1>Flaskr</h1>
-      <div class=metanav>
-      {% if not session.logged_in %}
-        <a href="{{ url_for('login') }}">log in</a>
-      {% else %}
-        <a href="{{ url_for('logout') }}">log out</a>
-      {% endif %}
-      </div>
-      {% for message in get_flashed_messages() %}
-        <div class=flash>{{ message }}</div>
-      {% endfor %}
-      {% block body %}{% endblock %}
-    </div>
-
-show_entries.html
------------------
-
-这个模板继承了上面的 `layout.html` 模板来显示消息。注意 `for` 循环会遍历并输出
-所有 :func:`~flask.render_template` 函数传入的消息。我们还告诉表单使用 `HTTP`
-的 `POST` 方法提交信息到 `add_entry` 函数:
-
-.. sourcecode:: html+jinja
-
-    {% extends "layout.html" %}
-    {% block body %}
-      {% if session.logged_in %}
-        <form action="{{ url_for('add_entry') }}" method=post class=add-entry>
-          <dl>
-            <dt>Title:
-            <dd><input type=text size=30 name=title>
-            <dt>Text:
-            <dd><textarea name=text rows=5 cols=40></textarea>
-            <dd><input type=submit value=Share>
-          </dl>
-        </form>
-      {% endif %}
-      <ul class=entries>
-      {% for entry in entries %}
-        <li><h2>{{ entry.title }}</h2>{{ entry.text|safe }}
-      {% else %}
-        <li><em>Unbelievable.  No entries here so far</em>
-      {% endfor %}
+      <ul>
+        {% if g.user %} 
+          <li><span>{{ g.user['username'] }}</span>
+          <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
+        {% else %}
+          <li><a href="{{ url_for('auth.register') }}">Register</a>
+          <li><a href="{{ url_for('auth.login') }}">Log In</a>
+        {% endif %}
       </ul>
+    </nav>
+    <section class="content">
+      <header>
+        {% block header %}{% endblock %}
+      </header>
+      {% for message in get_flashed_messages() %}
+        <div class="flash">{{ message }}</div>
+      {% endfor %}
+      {% block content %}{% endblock %}
+    </section>
+
+在模板中也可以访问 :data:`g` 对象。取决于 ``g.user`` 是否存在（
+由 ``load_logged_in_user`` 设置在 :data:`g` 上），要么显示用户名和登出链接，要么
+显示注册和登入链接。同样， :func:`url_for` 也可以在模板中使用，用于生成视图的 URL，
+而不是手写 URL。
+
+在页面标题后，内容之前，模板遍历了 :func:`get_flashed_messages` 返回的消息。在此处
+展示视图中 :func:`flash` 暂存的错误信息。
+
+此处定义了三个块，其他模板可以覆盖这些块：
+
+#.  ``{% block title %}`` 显示浏览器标签页和窗口的标题。
+
+#.  ``{% block header %}`` 类似 ``title`` ，显示页面中的标题。
+
+#.  ``{% block content %}`` 是每个页面中的内容，比如登入表单或博客文章。
+
+基础模板应直接放置在 ``templates`` 目录下。为保持其他模板整齐有序，蓝图的模板应置于
+蓝图文件夹下。
+
+.. _register:
+
+注册
+--------
+
+.. code-block:: html+jinja
+    :caption: ``flaskr/templates/auth/register.html``
+
+    {% extends 'base.html' %}
+
+    {% block header %}
+      <h1>{% block title %}Register{% endblock %}</h1>
     {% endblock %}
 
-login.html
-----------
-
-最后是登入模板，只是简单地显示一个允许用户登入的表单:
-
-.. sourcecode:: html+jinja
-
-    {% extends "layout.html" %}
-    {% block body %}
-      <h2>Login</h2>
-      {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-      <form action="{{ url_for('login') }}" method=post>
-        <dl>
-          <dt>Username:
-          <dd><input type=text name=username>
-          <dt>Password:
-          <dd><input type=password name=password>
-          <dd><input type=submit value=Login>
-        </dl>
+    {% block content %}
+      <form method="post">
+        <label for="username">Username</label>
+        <input name="username" id="username" required>
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required>
+        <input type="submit" value="Register">
       </form>
     {% endblock %}
 
-继续 :ref:`tutorial-css` 。
+
+``{% extends 'base.html' %}`` 让 Jinja 允许这个模板替换基础模板中的块。
+``{% block %}`` 标签内的内容将会覆盖基础模板中的块。
+
+这里用到了一个很实用的模式，把 ``{% block title %}`` 放在 ``{% block header %}``
+里面。这样可以同时设置 title 块和 header 块的值，窗口标题和页面标题保持一致，而不是
+手写两遍。
+
+这里的 ``input`` 标签使用了 ``required`` 属性。设置了这个属性后，字段未填写内容将会
+导致浏览器拒绝提交表单。如果用户正在使用不支持该特性的老版本浏览器，或者用浏览器以外的
+东西提交请求，你就需要在 Flask 视图中验证数据。即便客户端验证已经相当完善，服务端验证
+依然相当重要。
+
+.. _log-in:
+
+登入
+------
+
+与注册页面的模板基本一模一样，除了标题和提交按钮。
+
+.. code-block:: html+jinja
+    :caption: ``flaskr/templates/auth/login.html``
+
+    {% extends 'base.html' %}
+
+    {% block header %}
+      <h1>{% block title %}Log In{% endblock %}</h1>
+    {% endblock %}
+
+    {% block content %}
+      <form method="post">
+        <label for="username">Username</label>
+        <input name="username" id="username" required>
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required>
+        <input type="submit" value="Log In">
+      </form>
+    {% endblock %}
+
+.. _register-a-user:
+
+注册用户
+---------------
+
+现在认证模板已经写好了，你可以注册用户了。确保服务器正在运行（如果没有就运行
+``flask run`` ），然后访问 http://127.0.0.1:5000/auth/register 。
+
+尝试在不填写表单的情况下直接点击“注册”按钮，你会看到浏览器报错。删除
+``register.html`` 模板中的 ``required`` 属性再点击“注册”，浏览器将不再报错，页面会
+重新加载并显示视图中 :func:`flash` 发送的错误消息。
+
+填好用户名和密码并提交后，将会重定向到登入界面。试试输入错误的用户名，或是正确的用户名
+但错误的密码。如果登入成功，会看到报错信息，因为跳转到的 ``index`` 视图还没写好。
+
+继续阅读 :doc:`static` 部分。
