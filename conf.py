@@ -9,7 +9,7 @@ from pallets_sphinx_themes import DocVersion, ProjectLink, get_version
 # Project --------------------------------------------------------------
 
 project = 'Flask'
-copyright = '2010 Pallets Team'
+copyright = '2010 Pallets Team，「人间」翻译版本'
 author = 'Pallets Team'
 release, version = get_version('Flask')
 

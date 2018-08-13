@@ -2,6 +2,12 @@ body {
     font-family: 'Source Han Serif CN', 'Garamond', 'Georgia', serif;
 }
 
+em {
+    font-style: normal;
+    font-weight: bold;
+    color: #001689;
+}
+
 .translator-list>li.translator {
     margin-bottom: .5em;
 }
