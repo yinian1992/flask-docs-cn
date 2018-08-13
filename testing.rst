@@ -13,9 +13,7 @@
 Flask 把 Werkzeug 的测试类 :class:`~werkzeug.test.Client` 暴露出来用于应用的测
 试，这个类用于处理上下文局部变量。你可以在你偏好的测试解决方案里使用它。
 
-在
-
-在本文档中使用 Python 自带的 `pytest`_ 包作为测试的基础框架。请用 ``pip`` 安装它::
+在本文档中，我们用 `pytest`_ 包作为测试的基础框架。请用 ``pip`` 安装它::
 
     pip install pytest
 
