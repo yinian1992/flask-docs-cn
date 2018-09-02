@@ -1,116 +1,139 @@
+.. currentmodule:: flask
+
 .. _app-context:
 
 应用上下文
 =======================
 
-.. versionadded:: 0.9
+应用上下文用于记录请求中、CLI 命令或是其他活动时的应用层数据。你应该用
+:data:`current_app` 和 :data:`g` 代理访问这些数据，而不是在函数间传递应用对象。
 
-Flask 背后的设计理念之一就是，代码在执行时会处于两种不同的“状态”（states）。
-当 :class:`Flask` 对象被实例化后在模块层次上应用便开始隐式地处于应用配置状
-态。一直到第一个请求还是到达这种状态才隐式地结束。当应用处于这个状态的时候
-，你可以认为下面的假设是成立的：
+这个概念与 :doc:`/reqcontext` 类似，只不过请求上下文记录的是请求中的请求层数据。当
+请求上下文入栈时，相应的应用上下文也会入栈。
 
--   程序员可以安全地修改应用对象
--   目前还没有处理任何请求
--   你必须得有一个指向应用对象的引用来修改它。不会有某个神奇的代理变量指向
-    你刚创建的或者正在修改的应用对象的
+.. _purpose-of-the-context:
 
-相反，到了第二个状态，在处理请求时，有一些其它的规则:
+上下文的用途
+----------------------
 
--   当一个请求激活时，上下文的本地对象（ :data:`flask.request` 和其它对象等）
-    指向当前的请求
--   你可以在任何时间里使用任何代码与这些对象通信
+:class:`Flask` 应用对象上有一些类似 :attr:`~Flask.config` 的属性，需要在视图和
+:doc:`CLI 命令 </cli>` 中访问。但是在项目的模块范围内导入 ``app`` 实例很容易导致
+循环导入问题。如果采用了 :doc:`应用工厂模式 </patterns/appfactories>` ，或者编写可
+重用的 :doc:`蓝图 </blueprints>` 以及 :doc:`扩展 </extensions>` 时，就不再需要导入
+``app`` 实例了。
 
+Flask 引入了 *应用上下文* 的概念来解决这个问题。你应该使用 :data:`current_app` 代
+理，它指向处理当前活动的应用对象，而不是直接引用 ``app``。
 
-这里有一个第三种情况，有一点点差异。有时，你正在用类似请求处理时方式来
-与应用交互，即使并没有活动的请求。想象一下你用交互式 Python shell 与应用
-交互的情况，或是一个命令行应用的情况。
+在处理请求时，Flask 自动将一个应用上下文 *入栈* 。视图函数、错误处理函数和其他在请求
+中运行的函数均可访问到 :data:`current_app`。
 
-:data:`~flask.current_app` 上下文本地变量就是应用上下文驱动的。
+Flask 也会在运行用 ``@app.cli.command()`` 注册到 :attr:`Flask.cli` 的 CLI 命令时
+自动将一个应用上下文入栈。
 
-应用上下文的作用
-----------------------------------
+.. _lifetime-of-the-context:
 
-应用上下问存在的主要原因是，在过去，请求上下文被附加了一堆函数，但是又没
-有什么好的解决方案。因为 Flask 设计的支柱之一是你可以在一个 Python 进程中
-拥有多个应用。
-
-那么代码如何找到“正确的”应用？在过去，我们推荐显式地到处传递应用，但是这
-会让我们在使用不是以这种理念设计的库时遇到问题。
-
-解决上述问题的常用方法是使用后面将会提到的 :data:`~flask.current_app` 代
-理对象，它被绑定到当前请求的应用的引用。既然无论如何在没有请求时创建一个
-这样的请求上下文是一个没有必要的昂贵操作，应用上下文就被引入了。
-
-创建应用上下文
--------------------------------
-
-有两种方式来创建应用上下文。第一种是隐式的：无论何时当一个请求上下文被压栈时，
-如果有必要的话一个应用上下文会被一起创建。由于这个原因，你可以忽略应用
-上下文的存在，除非你需要它。
-
-第二种是显式地调用 :meth:`~flask.Flask.app_context` 方法::
-
-    from flask import Flask, current_app
-
-    app = Flask(__name__)
-    with app.app_context():
-        # within this block, current_app points to app.
-        print current_app.name
-
-在配置了 ``SERVER_NAME`` 时，应用上下文也被用于 :func:`~flask.url_for` 函
-数。这允许你在没有请求时生成 URL 。
-
-应用上下文局部变量
+上下文的生命周期
 -----------------------
 
-应用上下文会在必要时被创建和销毁。它不会在线程间移动，并且也不会在不同的请求
-之间共享。正因为如此，它是一个存储数据库连接信息或是别的东西的最佳位置。内部
-的栈对象叫做 :data:`flask._app_ctx_stack` 。扩展可以在最顶层自由地存储额外信
-息，想象一下它们用一个充分独特的名字在那里存储信息，而不是在 :data:`flask.g` 
-对象里， :data:`flask.g` 是留给用户的代码用的。
+应用上下文可以根据需要创建和销毁。当 Flask 应用开始处理请求时，会将一个应用上下文和
+一个 :doc:`请求上下文 </reqcontext>` 入栈。当请求结束时，则将应用上下文和请求上下文
+出栈。通常应用上下文的生命周期与请求上下文一致。
 
-更多详情见 :ref:`extension-dev` 。
+更多关于上下文工作机制和请求的完整生命周期的信息见 :doc:`/reqcontext` 部分。
 
-上下文用法
--------------
+.. _manually-push-a-context:
 
-上下文的一个典型应用场景就是用来缓存一些我们需要在发生请求之前或者要使用的
-资源。举个例子，比如数据库连接。当我们在应用上下文中来存储东西的时候你
-得选择一个唯一的名字，这是因为应用上下文为 Flask 应用和扩展所共享。
+手动入栈上下文
+---------------
 
-最常见的应用就是把资源的管理分成如下两个部分：
+如果你在应用上下文之外的地方访问 :data:`current_app` 或其他依赖应用上下文的东西，你
+将会看到这样的报错信息：
 
-1.  一个缓存在上下文中的隐式资源
-2.  当上下文被销毁时重新分配基础资源
+.. code-block:: pytb
 
-通常来讲，这将会有一个 ``get_X()`` 函数来创建资源 ``X`` ，如果它还不存在的话。
-存在的话就直接返回它。另外还会有一个 ``teardown_X()`` 的回调函数用于销毁资源
-``X`` 。
+    RuntimeError: Working outside of application context.
 
-如下是我们刚刚提到的连接数据库的例子::
+    This typically means that you attempted to use functionality that
+    needed to interface with the current application object in some way.
+    To solve this, set up an application context with app.app_context().
 
-    import sqlite3
+如果你是在配置应用时遇到此错误，比如初始化扩展时。因为此时你可以直接访问到 ``app``，
+你就可以手动入栈一个上下文。配合 ``with`` 块级语句调用 :meth:`~Flask.app_context`，
+块中的内容即可正常访问到 :data:`current_app`::
+
+    def create_app():
+        app = Flask(__name__)
+
+        with app.app_context():
+            init_db()
+
+        return app
+
+如果你是在与配置应用无关的位置遇到这个错误，这大多意味着你应该把报错涉及的代码转移到
+视图函数或是 CLI 命令中。
+
+.. _storing-data:
+
+存储数据
+--------------
+
+应用上下文是一个存储在请求、CLI 命令中共用数据的绝佳位置。Flask 为此提供了
+:data:`g object <g>` 对象。这是一个简单的命名空间对象，生命周期与应用上下文一样。
+
+.. note::
+    ``g`` 对象的名称源自“全局（Global）”，但只引用 *上下文生命周期内* 的全局数据。
+    在上下文销毁后，``g`` 对象上的数据也将丢失，也即不应该用于存储跨请求的数据。请用
+    :data:`session` 或数据库来存储跨请求的数据。
+
+:data:`g` 的一般用法是管理请求中的资源。
+
+1.  如果 ``X`` 不存在，``get_X()`` 则创建资源 ``X``，并缓存为 ``g.X``。
+2.  ``teardown_X()`` 关闭或释放资源已存在的资源 ``X``。这个函数应该注册为
+    :meth:`~Flask.teardown_appcontext` 的处理函数。
+
+例如，你可以用这个模式管理数据库连接::
+
     from flask import g
 
     def get_db():
-        db = getattr(g, '_database', None)
-        if db is None:
-            db = g._database = connect_to_database()
-        return db
+        if 'db' not in g:
+            g.db = connect_to_database()
+
+        return g.db
 
     @app.teardown_appcontext
-    def teardown_db(exception):
-        db = getattr(g, '_database', None)
+    def teardown_db():
+        db = g.pop('db', None)
+
         if db is not None:
             db.close()
 
-当 ``get_db()`` 这个函数第一次被调用的时候数据库连接已经被建立了。
-为了使得看起来更隐式一点我们可以使用 :class:`~werkzeug.local.LocalProxy` 这
-个类：
+在请求内，每次调用 ``get_db()`` 均返回相同的数据库连接，并会在请求结束时自动关闭这个
+数据库连接。
+
+你可以用 :class:`~werkzeug.local.LocalProxy` 从 ``get_db()`` 创建一个上下文局域
+变量::
+
 
     from werkzeug.local import LocalProxy
     db = LocalProxy(get_db)
 
-这样的话用户就可以直接通过访问 ``db`` 来获取数据句柄了， ``db`` 已经在内部完
-成了对 ``get_db()`` 的调用。
+访问 ``db`` 时，其内部就会调用 ``get_db``，如同 :data:`current_app` 的工作方式。
+
+----
+
+如果你正在编写扩展，:data:`g` 应该保留给用户代码。你应该直接在上下文中存储内部数据，
+并且确保使用独一无二的命名。访问 :data:`_app_ctx_stack.top <_app_ctx_stack>` 即可
+获取当前的应用上下文。更多信息见 :doc:`extensiondev`。
+
+.. _events-and-signals:
+
+事件与信号
+------------------
+
+当应用上下文出栈时，应用会调用注册到 :meth:`~Flask.teardown_appcontext` 的函数。
+
+当 :data:`~signals.signals_available` 为 ``True`` 时，还会发出
+:data:`appcontext_pushed`、:data:`appcontext_tearing_down` 和
+:data:`appcontext_popped` 信号。
