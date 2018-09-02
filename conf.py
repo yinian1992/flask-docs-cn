@@ -4,7 +4,8 @@ from __future__ import print_function
 import inspect
 import re
 
-from pallets_sphinx_themes import DocVersion, ProjectLink, get_version
+from pallets_sphinx_themes import ProjectLink, get_version
+from pallets_sphinx_themes.versions import DocVersion
 
 # Project --------------------------------------------------------------
 

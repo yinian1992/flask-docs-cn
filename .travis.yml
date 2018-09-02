@@ -3,7 +3,7 @@ python:
   - "3.6"
 # command to install dependencies
 install: 
-  - pip install flask[docs]
+  - pip install -r requirements.txt
 # command to run tests
 script:
   - sphinx-build -b html -d _build/doctrees . _build/html
