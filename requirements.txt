@@ -12,7 +12,7 @@ Jinja2==2.11.3
 MarkupSafe==1.0
 packaging==17.1
 Pallets-Sphinx-Themes==1.0.1
-Pygments==2.2.0
+Pygments==2.7.4
 pyparsing==2.2.0
 pytz==2018.5
 requests==2.20.0
