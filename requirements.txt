@@ -1,6 +1,6 @@
 alabaster==0.7.11
 Babel==2.9.1
-certifi==2018.4.16
+certifi==2022.12.7
 chardet==3.0.4
 click==6.7
 docutils==0.14
