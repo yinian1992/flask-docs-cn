@@ -22,4 +22,4 @@ Sphinx==1.7.5
 sphinxcontrib-log-cabinet==1.0.0
 sphinxcontrib-websupport==1.1.0
 urllib3==1.26.5
-Werkzeug==0.15.3
+Werkzeug==2.2.3
